@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Figma Plugin Login</title>
+  <style>
+    body {
+      background: white !important;
+      margin: 0;
+      padding: 0;
+    }
+
+    input {
+      display: block;
+      margin-bottom: 10px;
+    }
+
+    #react-page {
+      display: none; /* Initially hide the container */
+    }
+  </style>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/thomas-lowry/figma-plugin-ds/dist/figma-plugin-ds.css">
+</head>
+
+<body>
+<div id="login-form">
+  <label for="username">Username</label>
+  <input type="text" id="username">
+
+  <label for="password">Password</label>
+  <input type="password" id="password">
+
+  <button class="button button--primary" id="login-button">Login</button>
+</div>
+
+<div id="react-page" class="container">
+  <!-- Your React content goes here -->
+  <div style="display: flex; flex-direction: column; align-items: stretch">
+    <img style="margin: 100px auto; width: 30px; height: 30px" src="https://cdn.builder.io/api/v1/image/assets%2FYJIGb4i01jvw0SRdL5Bt%2F0ea05b817e7040c39ec81987611542d7" />
+  </div>
+</div>
+
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-W8MM88D2K8"></script>
+<script>
+  // Function to handle login
+  document.getElementById('login-button').addEventListener('click', () => {
+    const username = document.getElementById('username').value;
+    const password = document.getElementById('password').value;
+
+    // Example: Perform login validation (replace this with your actual login logic)
+    if (username === 'p' && password === 'p') {
+      // If login is successful, show the container div
+      document.getElementById('login-form').style.display = 'none';
+      document.getElementById('react-page').style.display = 'block';
+    } else {
+      alert('Invalid username or password');
+    }
+  });
+
+  // Google Analytics
+  window.dataLayer = window.dataLayer || [];
+  function gtag() {
+    dataLayer.push(arguments);
+  }
+  gtag("js", new Date());
+  gtag("config", "G-W8MM88D2K8");
+</script>
+</body>
+
+</html>
+22:29
+<style>
+  body {
+    background: white !important;
+    margin: 0;
+    padding: 0;
+  }
+</style>
+
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script
+        async
+        src="https://www.googletagmanager.com/gtag/js?id=G-W8MM88D2K8"
+></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag() {
+    dataLayer.push(arguments);
+  }
+  gtag("js", new Date());
+
+  gtag("config", "G-W8MM88D2K8");
+</script>
