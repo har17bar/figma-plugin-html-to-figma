@@ -1,4 +1,4 @@
-import { MetaTextNode, PlainLayerNode } from '../types';
+import { MetaTextNode } from '../types';
 import {
     fastClone,
     parseUnits,
@@ -15,7 +15,7 @@ export const textToFigma = (node: Element, { fromTextInput = false } = {}) => {
         (node as HTMLInputElement).placeholder
     )?.trim();
     if (!textValue) return;
-
+    // console.log(context.window.document.body.outerHTML, "+++")
     const { getComputedStyle } = context.window;
 
     const parent = node.parentElement as Element;

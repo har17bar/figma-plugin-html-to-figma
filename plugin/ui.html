@@ -55,6 +55,31 @@
       // If login is successful, show the container div
       document.getElementById('login-form').style.display = 'none';
       document.getElementById('react-page').style.display = 'block';
+
+      // Make API request
+      fetch('https://api.rawii.ai/api/authenticate', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          login: "har17bar",
+          password: "root",
+          rememberMe: true
+        })
+      })
+      .then(response => {
+        if (!response.ok) {
+          throw new Error('Network response was not ok');
+        }
+        return response.json();
+      })
+      .then(data => {
+        console.log(data); // Handle API response here
+      })
+      .catch(error => {
+        console.error('There was a problem with the fetch operation:', error);
+      });
     } else {
       alert('Invalid username or password');
     }
@@ -71,7 +96,6 @@
 </body>
 
 </html>
-22:29
 <style>
   body {
     background: white !important;

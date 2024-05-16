@@ -108,6 +108,51 @@ const mapDOM = async (root: Element): Promise<LayerNode> => {
     return layersWithoutMeta;
 }
 
+export async function htmlToFigmaFrame(
+    selector: HTMLElement | string = 'body',
+) {
+    let layers: LayerNode[] = [];
+    const el =
+        isElemType(selector as HTMLElement, ElemTypes.Element)
+            ? selector as HTMLElement
+            : context.document.querySelectorAll(selector as string || 'body')[0];
+
+    if (!el) {
+        throw Error(`Element not found`);
+    }
+
+    console.warn('Element tree:', el.innerHTML);
+
+    // Process SVG <use> elements
+    for (const use of Array.from(
+        el.querySelectorAll('use')
+    ) as SVGUseElement[]) {
+        try {
+            const symbolSelector = use.href.baseVal;
+            const symbol: SVGSymbolElement | null =
+                context.document.querySelector(symbolSelector);
+            if (symbol) {
+                use.outerHTML = symbol.innerHTML;
+            }
+        } catch (err) {
+            console.warn('Error querying <use> tag href', err);
+        }
+    }
+
+    // const els = (Array.from(el.querySelectorAll('*')) as Element[]).reduce(
+    //     (memo, el) => {
+    //         memo.push(el);
+    //         memo.push(...getShadowEls(el));
+
+    //         return memo;
+    //     },
+    //     [] as Element[]
+    // );
+    const data = await mapDOM(el);
+
+    return data ? [data] : [];
+}
+
 export async function htmlToFigma(
     selector: HTMLElement | string = 'body',
 ) {
@@ -116,7 +161,6 @@ export async function htmlToFigma(
         isElemType(selector as HTMLElement, ElemTypes.Element)
             ? selector as HTMLElement
             : context.document.querySelectorAll(selector as string || 'body')[0];
-    console.log(el, "el++++++")
     if (!el) {
         throw Error(`Element not found`);
     }

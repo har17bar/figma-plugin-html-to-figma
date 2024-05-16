@@ -241,15 +241,11 @@ export function isHidden(element: Element, pseudo?: string) {
     do {
         const computed = getComputedStyle(el, pseudo);
 
-        console.log(computed.opacity, "opacity",el)
-        console.log(computed.display, "display",el)
-        console.log(computed.visibility, "visibility",el)
         if (
             (computed.opacity === '0' ||
                 computed.display === 'none' ||
                 computed.visibility === 'hidden')
         ) {
-            console.log("TRUEEE")
             return true;
         }
 
