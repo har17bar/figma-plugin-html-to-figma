@@ -1,7 +1,6 @@
 import { BuilderElement } from '@builder.io/sdk';
 import { createRef,RefObject } from 'react';
 import {
-  Button,
   createMuiTheme,
   CssBaseline,
   Divider,
@@ -36,7 +35,7 @@ import { v4 as uuid } from 'uuid';
 import { useDev } from './constants/use-dev';
 import {context, htmlToFigmaFrame} from './htmlParser/browser';
 import { LayerNode } from './htmlParser/types';
-import {getHtml, inlineRemoteCSS} from "./htmlParser/browser/getHtml";
+import {getHtml} from "./htmlParser/browser/getHtml";
 
 // https://stackoverflow.com/a/46634877
 type Writeable<T> = { -readonly [P in keyof T]: T[P] };
@@ -854,55 +853,6 @@ class App extends SafeComponent {
     }
   };
 
-  // onHtmlToCss = async () => {
-  //   const iframe = this.iframeRef.current;
-  //   if (iframe) {
-  //     const iframeDoc = iframe.contentDocument;
-  //     if (iframeDoc) {
-  //       try {
-  //         const figmaLayers = await htmlToFigma(iframeDoc.querySelector('#html_to_figma_layer_id'));
-  //         console.log('Converted to Figma layers:', figmaLayers);
-  //         sendToFigma(figmaLayers);
-  //         // Now you can use figmaLayers in your Figma project
-  //       } catch (error) {
-  //         console.error('Error converting to Figma layers:', error);
-  //       }
-  //     }
-  //   }
-  // };
-
-  // onHtmlToCss = async () => {
-  //   const iframe = this.iframeRef.current;
-  //   if (iframe) {
-  //     const iframeDoc = iframe.contentDocument;
-  //     if (iframeDoc) {
-  //       try {
-  //         const figmaLayers = await htmlToFigma(iframeDoc.querySelector('#html_to_figma_layer_id'));
-  //         console.log('Converted to Figma layers:', figmaLayers);
-  //         sendToFigma(figmaLayers);
-  //         // Now you can use figmaLayers in your Figma project
-  //       } catch (error) {
-  //         console.error('Error converting to Figma layers:', error);
-  //       }
-  //     }
-  //   }
-  // };
-  //
-  //
-//   onHtmlToCss = () => {
-// // Call the htmlToFigma function with the HTML text
-//     htmlToFigma("#html_to_figma_layer_id")
-//       .then(figmaLayers => {
-//         console.log('Converted to Figma layers:', figmaLayers);
-//         sendToFigma(figmaLayers)
-//         // Now you can use figmaLayers in your Figma project
-//       })
-//       .catch(error => {
-//         console.error('Error converting to Figma layers:', error);
-//       });
-//
-//   };
-
   onCreate = () => {
     if (this.loading) {
       return;
@@ -1002,6 +952,18 @@ class App extends SafeComponent {
     // const htmlWithInlineCSS = inlineRemoteCSS(htmlDoc);
     // const serializedHtml = new XMLSerializer().serializeToString(htmlDoc)
 
+    const fetchWireFrames = () => {
+      return ['warframe-project-1', 'warframe-project-2', 'warframe-project-3'];
+    };
+
+    const itemList = fetchWireFrames();
+
+    const handleItemClick = (item:any) => {
+      console.log("Clicked on", item);
+      // this.handleHtmlToFigma(); // Call the handleHtmlToFigma function
+      // Handle item click logic here
+    };
+
     return (
       <IntlProvider messages={this.currentLanguage === 'en' ? en : ru} locale={this.currentLanguage} defaultLocale="en">
         <html>
@@ -1057,8 +1019,22 @@ class App extends SafeComponent {
         </div>
         {/* Rendered HTML content with associated CSS styles */}
         {/*<div style={{position: "absolute", left: "-9999px"}} dangerouslySetInnerHTML={{ __html: this.state.serializedHtml }} id="html_to_figma_layer_id"/>*/}
-        <iframe id="html_to_figma_layer_id" ref={this.iframeRef} style={{ width: '100%', height: '500px' }} />
-
+        <iframe id="html_to_figma_layer_id" ref={this.iframeRef} style={{ width: '100%', height: '500px',position: "absolute", left: "-9999px" }} />
+        <div style={{ width: '200px' }}> {/* Adjust the marginLeft according to your layout */}
+        <ul>
+          {itemList.map((item, index) => (
+              <li
+                  key={index}
+                  onClick={() => handleItemClick(item)}
+                  style={{ cursor: 'pointer' }}
+                  onMouseEnter={(e) => (e.target as HTMLElement).style.backgroundColor = 'lightgray'}
+                  onMouseLeave={(e) => (e.target as HTMLElement).style.backgroundColor = 'white'}
+              >
+                {item}
+              </li>
+          ))}
+        </ul>
+        </div>
         </body>
         </html>
         <div
@@ -1087,401 +1063,27 @@ class App extends SafeComponent {
             indicatorColor="primary"
             textColor="primary"
           >
-            {/*<Tab*/}
-            {/*  style={{*/}
-            {/*    minHeight: 40,*/}
-            {/*    minWidth: 0,*/}
-            {/*  }}*/}
-            {/*  label={*/}
-            {/*    <span*/}
-            {/*      style={{*/}
-            {/*        fontSize: 12,*/}
-            {/*        fontWeight: 'bold',*/}
-            {/*        textTransform: 'none',*/}
-            {/*      }}*/}
-            {/*    >*/}
-            {/*      Html to Figma*/}
-            {/*    </span>*/}
-            {/*  }*/}
-            {/*/>*/}
-            {/*<Tab*/}
-            {/*  style={{*/}
-            {/*    minHeight: 40,*/}
-            {/*    minWidth: 0,*/}
-            {/*  }}*/}
-            {/*  label={*/}
-            {/*    <span*/}
-            {/*      style={{*/}
-            {/*        fontSize: 12,*/}
-            {/*        fontWeight: 'bold',*/}
-            {/*        textTransform: 'none',*/}
-            {/*      }}*/}
-            {/*    >*/}
-            {/*      Import from web*/}
-            {/*    </span>*/}
-            {/*  }*/}
-            {/*/>*/}
           </Tabs>
           <Divider style={{ width: settings.ui.baseWidth }} />
           <TabPanel value={this.tabIndex} index={0}>
             <div
-              style={{
-                display: 'flex',
-                flexDirection: 'column',
-                position: 'relative',
-                zIndex: 3,
-                maxWidth: settings.ui.baseWidth,
-                fontWeight: 400,
-                marginBottom: 10,
-                padding: 5,
-              }}
+                style={{
+                  display: 'flex',
+                  flexDirection: 'column',
+                  position: 'relative',
+                  zIndex: 3,
+                  maxWidth: settings.ui.baseWidth,
+                  fontWeight: 400,
+                  marginBottom: 10,
+                  padding: 5,
+                }}
             >
               <div style={{ margin: '0 10 10' }}>
-                <Button
-                  type="submit"
-                  disabled={Boolean(this.errorMessage || this.loading || !this.online)}
-                  style={{
-                    marginTop: 10,
-                    marginBottom: 15,
-                    textTransform: 'none',
-                  }}
-                  fullWidth
-                  color="primary"
-                  variant="contained"
-                  onClick={this.handleHtmlToFigma}
-                >
-                  <FormattedMessage  id="blaa" defaultMessage="Convert html to layers" />
-                </Button>
+                {/* Your content here instead of the Button */}
+                <FormattedMessage id="somee" defaultMessage="Convert html to layers" />
               </div>
             </div>
           </TabPanel>
-          {/* Import to Figma */}
-          {/*<TabPanel value={this.tabIndex} index={1}>*/}
-          {/*  <div*/}
-          {/*    style={{*/}
-          {/*      display: 'flex',*/}
-          {/*      flexDirection: 'column',*/}
-          {/*      position: 'relative',*/}
-          {/*      zIndex: 3,*/}
-          {/*      maxWidth: settings.ui.baseWidth,*/}
-          {/*      fontWeight: 400,*/}
-          {/*      marginBottom: 10,*/}
-          {/*      padding: 5,*/}
-          {/*    }}*/}
-          {/*  >*/}
-          {/*    <form*/}
-          {/*      ref={(ref) => (this.form = ref)}*/}
-          {/*      // {...{ validate: 'true' }}*/}
-          {/*      style={{*/}
-          {/*        display: 'flex',*/}
-          {/*        flexDirection: 'column',*/}
-          {/*        marginBottom: -10,*/}
-          {/*      }}*/}
-          {/*      onSubmit={(e) => {*/}
-          {/*        e.preventDefault();*/}
-          {/*        this.onCreate();*/}
-          {/*      }}*/}
-          {/*    >*/}
-          {/*      <div*/}
-          {/*        style={{*/}
-          {/*          margin: '15 10 10 10',*/}
-          {/*          fontWeight: 'bold',*/}
-          {/*        }}*/}
-          {/*      >*/}
-          {/*        <FormattedMessage id="importDesigns" defaultMessage="Import designs from the web" />*/}
-          {/*      </div>*/}
-
-          {/*      <div*/}
-          {/*        style={{*/}
-          {/*          margin: '-3px 10px 13px',*/}
-          {/*          fontSize: 12,*/}
-          {/*          opacity: 0.8,*/}
-          {/*        }}*/}
-          {/*      >*/}
-          {/*        <FormattedMessage id="importDescription" defaultMessage="Convert website to figma design" />*/}
-          {/*      </div>*/}
-
-          {/*      <div*/}
-          {/*        style={{*/}
-          {/*          display: 'flex',*/}
-          {/*          flexDirection: 'column',*/}
-          {/*          margin: '0 10 10',*/}
-          {/*        }}*/}
-          {/*      >*/}
-          {/*        <div*/}
-          {/*          style={{*/}
-          {/*            display: 'flex',*/}
-          {/*            position: 'relative',*/}
-          {/*            marginTop: 5,*/}
-          {/*          }}*/}
-          {/*        >*/}
-          {/*          <TextField*/}
-          {/*            inputProps={{*/}
-          {/*              style: {*/}
-          {/*                fontSize: 12,*/}
-          {/*              },*/}
-          {/*            }}*/}
-          {/*            label={*/}
-          {/*              <span*/}
-          {/*                style={{*/}
-          {/*                  fontWeight: 'bold',*/}
-          {/*                  color: '#000000',*/}
-          {/*                }}*/}
-          {/*              >*/}
-          {/*                <FormattedMessage id="urlToImport" defaultMessage="Url to import" />*/}
-          {/*              </span>*/}
-          {/*            }*/}
-          {/*            fullWidth*/}
-          {/*            inputRef={(ref) => (this.urlInputRef = ref)}*/}
-          {/*            disabled={this.loading}*/}
-          {/*            required*/}
-          {/*            onKeyDown={(e) => {*/}
-          {/*              // Default cmd + a functionality as weird*/}
-          {/*              if ((e.metaKey || e.ctrlKey) && e.which === 65) {*/}
-          {/*                e.stopPropagation();*/}
-          {/*                e.preventDefault();*/}
-          {/*                if (e.shiftKey) {*/}
-          {/*                  const input = this.urlInputRef!;*/}
-          {/*                  input.setSelectionRange(0, 0);*/}
-          {/*                } else {*/}
-          {/*                  this.selectAllUrlInputText();*/}
-          {/*                }*/}
-          {/*              }*/}
-          {/*            }}*/}
-          {/*            placeholder="e.g. https://builder.io"*/}
-          {/*            type="url"*/}
-          {/*            value={this.urlValue}*/}
-          {/*            onChange={(e) => {*/}
-          {/*              let value = e.target.value.trim();*/}
-          {/*              if (!value.match(/^https?:\/\//)) {*/}
-          {/*                value = 'http://' + value;*/}
-          {/*              }*/}
-          {/*              this.urlValue = value;*/}
-          {/*            }}*/}
-          {/*          />*/}
-          {/*        </div>*/}
-          {/*        {this.showMoreOptions && (*/}
-          {/*          <div*/}
-          {/*            style={{*/}
-          {/*              display: 'flex',*/}
-          {/*              alignItems: 'flex-end',*/}
-          {/*              marginTop: 15,*/}
-          {/*            }}*/}
-          {/*          >*/}
-          {/*            <div style={{ position: 'relative', flexGrow: 1 }}>*/}
-          {/*              <TextField*/}
-          {/*                label={*/}
-          {/*                  <span*/}
-          {/*                    style={{*/}
-          {/*                      fontWeight: 'bold',*/}
-          {/*                      color: '#000000',*/}
-          {/*                    }}*/}
-          {/*                  >*/}
-          {/*                    <FormattedMessage id="width" defaultMessage="Width" />*/}
-          {/*                  </span>*/}
-          {/*                }*/}
-          {/*                required*/}
-          {/*                inputProps={{*/}
-          {/*                  min: '200',*/}
-          {/*                  max: '3000',*/}
-          {/*                  step: '10',*/}
-          {/*                  style: {*/}
-          {/*                    fontSize: 13,*/}
-          {/*                  },*/}
-          {/*                }}*/}
-          {/*                disabled={this.loading}*/}
-          {/*                onKeyDown={(e) => {*/}
-          {/*                  // Default cmd + a functionality as weird*/}
-          {/*                  if ((e.metaKey || e.ctrlKey) && e.which === 65) {*/}
-          {/*                    e.stopPropagation();*/}
-          {/*                    e.preventDefault();*/}
-          {/*                    if (e.shiftKey) {*/}
-          {/*                      const input = this.urlInputRef!;*/}
-          {/*                      input.setSelectionRange(0, 0);*/}
-          {/*                    } else {*/}
-          {/*                      const input = this.urlInputRef!;*/}
-          {/*                      input.setSelectionRange(0, input.value.length - 1);*/}
-          {/*                    }*/}
-          {/*                  }*/}
-          {/*                }}*/}
-          {/*                placeholder="1200"*/}
-          {/*                fullWidth*/}
-          {/*                type="number"*/}
-          {/*                value={this.width}*/}
-          {/*                onChange={(e) => {*/}
-          {/*                  this.width = String(parseInt(e.target.value) || 1200);*/}
-          {/*                }}*/}
-          {/*              />*/}
-          {/*              <div*/}
-          {/*                style={{*/}
-          {/*                  position: 'absolute',*/}
-          {/*                  right: -4,*/}
-          {/*                  top: 14,*/}
-          {/*                  borderRadius: 100,*/}
-          {/*                  display: 'flex',*/}
-          {/*                  ...(this.loading && {*/}
-          {/*                    pointerEvents: 'none',*/}
-          {/*                    opacity: 0.5,*/}
-          {/*                  }),*/}
-          {/*                }}*/}
-          {/*              >*/}
-          {/*                <IconButton*/}
-          {/*                  style={{*/}
-          {/*                    padding: 5,*/}
-          {/*                    background: 'none',*/}
-          {/*                    color: this.width === '1200' ? '#000' : '#888',*/}
-          {/*                  }}*/}
-          {/*                  onClick={() => (this.width = '1200')}*/}
-          {/*                >*/}
-          {/*                  <DesktopIcon />*/}
-          {/*                </IconButton>*/}
-
-          {/*                <IconButton*/}
-          {/*                  style={{*/}
-          {/*                    padding: 5,*/}
-          {/*                    background: 'none',*/}
-          {/*                    color: this.width === '900' ? '#000' : '#888',*/}
-          {/*                  }}*/}
-          {/*                  onClick={() => (this.width = '900')}*/}
-          {/*                >*/}
-          {/*                  <TabletIcon />*/}
-          {/*                </IconButton>*/}
-          {/*                <IconButton*/}
-          {/*                  style={{*/}
-          {/*                    padding: 5,*/}
-          {/*                    background: 'none',*/}
-          {/*                    color: this.width === '400' ? '#000' : '#888',*/}
-          {/*                  }}*/}
-          {/*                  onClick={() => (this.width = '400')}*/}
-          {/*                >*/}
-          {/*                  <MobileIcon />*/}
-          {/*                </IconButton>*/}
-          {/*              </div>*/}
-          {/*            </div>*/}
-
-          {/*            <Tooltip*/}
-          {/*              PopperProps={{*/}
-          {/*                modifiers: { flip: { behavior: ['top'] } },*/}
-          {/*              }}*/}
-          {/*              enterDelay={300}*/}
-          {/*              placement="top"*/}
-          {/*              title={this.getLang().framesPop}*/}
-          {/*            >*/}
-          {/*              <FormControlLabel*/}
-          {/*                value="Use Frames"*/}
-          {/*                disabled={this.loading}*/}
-          {/*                style={{ marginLeft: 20 }}*/}
-          {/*                control={*/}
-          {/*                  <Switch*/}
-          {/*                    size="small"*/}
-          {/*                    color="primary"*/}
-          {/*                    checked={this.useFrames}*/}
-          {/*                    onChange={(e) => (this.useFrames = e.target.checked)}*/}
-          {/*                  />*/}
-          {/*                }*/}
-          {/*                label={*/}
-          {/*                  <span*/}
-          {/*                    style={{*/}
-          {/*                      fontSize: 12,*/}
-          {/*                      position: 'relative',*/}
-          {/*                      fontWeight: 'bold',*/}
-          {/*                      top: -5,*/}
-          {/*                    }}*/}
-          {/*                  >*/}
-          {/*                    <FormattedMessage id="frames" defaultMessage="Frames" />*/}
-          {/*                  </span>*/}
-          {/*                }*/}
-          {/*                labelPlacement="top"*/}
-          {/*              />*/}
-          {/*            </Tooltip>*/}
-          {/*          </div>*/}
-          {/*        )}*/}
-          {/*      </div>*/}
-          {/*      {this.errorMessage && (*/}
-          {/*        <div*/}
-          {/*          style={{*/}
-          {/*            color: '#721c24',*/}
-          {/*            backgroundColor: '#f8d7da',*/}
-          {/*            border: '1px solid #f5c6cb',*/}
-          {/*            borderRadius: 4,*/}
-          {/*            padding: '.75rem 1.25rem',*/}
-          {/*            marginTop: 20,*/}
-          {/*          }}*/}
-          {/*        >*/}
-          {/*          {this.errorMessage}*/}
-          {/*        </div>*/}
-          {/*      )}*/}
-          {/*      {!this.online && (*/}
-          {/*        <div*/}
-          {/*          style={{*/}
-          {/*            color: '#721c24',*/}
-          {/*            backgroundColor: '#f8d7da',*/}
-          {/*            border: '1px solid #f5c6cb',*/}
-          {/*            borderRadius: 4,*/}
-          {/*            padding: '.75rem 1.25rem',*/}
-          {/*            marginTop: 20,*/}
-          {/*          }}*/}
-          {/*        >*/}
-          {/*          <FormattedMessage id="needOnline" defaultMessage="You need to be online to use this plugin" />*/}
-          {/*        </div>*/}
-          {/*      )}*/}
-          {/*      {this.loading ? (*/}
-          {/*        <div style={{ margin: 10 }}>*/}
-          {/*          <Box*/}
-          {/*            style={{*/}
-          {/*              padding: 5,*/}
-          {/*              backgroundColor: '#F9F9F9',*/}
-          {/*              borderRadius: 4,*/}
-          {/*              border: '1px solid #D3D3D3',*/}
-          {/*              marginBottom: 10,*/}
-          {/*            }}*/}
-          {/*          >*/}
-          {/*            <p style={{ margin: 2, fontSize: 12, opacity: 0.8 }}>*/}
-          {/*              <span style={{ fontWeight: 'bold' }}>Note: this plugin is not magic.</span> For best results,*/}
-          {/*              you may need to do some cleanup afterwards to make it production-ready.*/}
-          {/*            </p>*/}
-          {/*          </Box>*/}
-
-          {/*          <Loading content={this.loaderContent} />*/}
-          {/*        </div>*/}
-          {/*      ) : (*/}
-          {/*        <>*/}
-          {/*          <div style={{ margin: '0 10 10' }}>*/}
-          {/*            <Button*/}
-          {/*              type="submit"*/}
-          {/*              disabled={Boolean(this.errorMessage || this.loading || !this.online)}*/}
-          {/*              style={{*/}
-          {/*                marginTop: 10,*/}
-          {/*                marginBottom: 15,*/}
-          {/*                textTransform: 'none',*/}
-          {/*              }}*/}
-          {/*              fullWidth*/}
-          {/*              color="primary"*/}
-          {/*              variant="contained"*/}
-          {/*              onClick={this.onCreate}*/}
-          {/*            >*/}
-          {/*              <FormattedMessage id="import" defaultMessage="Import" />*/}
-          {/*            </Button>*/}
-          {/*          </div>*/}
-
-          {/*          <Divider*/}
-          {/*            style={{*/}
-          {/*              margin: '0 -5',*/}
-          {/*              maxWidth: settings.ui.baseWidth,*/}
-          {/*            }}*/}
-          {/*          />*/}
-          {/*          <div*/}
-          {/*            style={{*/}
-          {/*              padding: 15,*/}
-          {/*              margin: '5 -5 -5',*/}
-          {/*            }}*/}
-          {/*          >*/}
-          {/*          </div>*/}
-          {/*        </>*/}
-          {/*      )}*/}
-          {/*    </form>*/}
-          {/*  </div>*/}
-          {/*</TabPanel>*/}
         </div>
       </IntlProvider>
     );

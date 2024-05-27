@@ -1,95 +1,186 @@
-const htmlText = "<!DOCTYPE html>\n" +
-    "<html lang=\"en\">\n" +
-    "<head>\n" +
-    "    <meta charset=\"UTF-8\">\n" +
-    "    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n" +
-    "    <title>Online Shop</title>\n" +
-    "    <style>\n" +
-    "        /* CSS styles */\n" +
-    "        body {\n" +
-    "            font-family: Arial, sans-serif;\n" +
-    "            margin: 0;\n" +
-    "            padding: 0;\n" +
-    "        }\n" +
-    "\n" +
-    "        header {\n" +
-    "            background-color: #333;\n" +
-    "            color: #fff;\n" +
-    "            padding: 10px 0;\n" +
-    "            text-align: center;\n" +
-    "        }\n" +
-    "\n" +
-    "        .container {\n" +
-    "            width: 80%;\n" +
-    "            margin: 0 auto;\n" +
-    "            padding: 20px 0;\n" +
-    "        }\n" +
-    "\n" +
-    "        .product {\n" +
-    "            border: 1px solid #ccc;\n" +
-    "            padding: 10px;\n" +
-    "            margin-bottom: 20px;\n" +
-    "            overflow: hidden;\n" +
-    "        }\n" +
-    "\n" +
-    "        .product img {\n" +
-    "            width: 100%;\n" +
-    "            height: auto;\n" +
-    "        }\n" +
-    "\n" +
-    "        .product h2 {\n" +
-    "            margin-top: 0;\n" +
-    "        }\n" +
-    "\n" +
-    "        .product p {\n" +
-    "            margin: 5px 0;\n" +
-    "        }\n" +
-    "\n" +
-    "        footer {\n" +
-    "            background-color: #333;\n" +
-    "            color: #fff;\n" +
-    "            text-align: center;\n" +
-    "            padding: 10px 0;\n" +
-    "            position: absolute;\n" +
-    "            bottom: 0;\n" +
-    "            width: 100%;\n" +
-    "        }\n" +
-    "    </style>\n" +
-    "</head>\n" +
-    "<body id='container'>\n" +
-    "    <header>\n" +
-    "        <h1>Online Shop</h1>\n" +
-    "    </header>\n" +
-    "    \n" +
-    "    <div class=\"container\">\n" +
-    "        <div class=\"product\">\n" +
-    "            <img src=\"product1.jpg\" alt=\"Product 1\">\n" +
-    "            <h2>Product 1</h2>\n" +
-    "            <p>Description of Product 1</p>\n" +
-    "            <p>Price: $XX.XX</p>\n" +
-    "            <button>Add to Cart</button>\n" +
-    "        </div>\n" +
-    "        \n" +
-    "        <div class=\"product\">\n" +
-    "            <img src=\"product2.jpg\" alt=\"Product 2\">\n" +
-    "            <h2>Product 2</h2>\n" +
-    "            <p>Description of Product 2</p>\n" +
-    "            <p>Price: $XX.XX</p>\n" +
-    "            <button>Add to Cart</button>\n" +
-    "        </div>\n" +
-    "\n" +
-    "        <!-- Add more products as needed -->\n" +
-    "    </div>\n" +
-    "\n" +
-    "    <footer>\n" +
-    "        <p>&copy; 2024 Online Shop</p>\n" +
-    "    </footer>\n" +
-    "</body>\n" +
-    "</html>\n"
+const htmlText = `<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset=UTF-8>
+    <meta name=viewport content="width=device-width, initial-scale=1.0">
+    <title>Online Shop</title>
+    <style>
+        /* CSS styles */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+
+        header {
+            background-color: #333;
+            color: #fff;
+            padding: 10px 0;
+            text-align: center;
+        }
+
+        .container {
+            width: 80%;
+            margin: 0 auto;
+            padding: 20px 0;
+        }
+
+        .product {
+            border: 1px solid #ccc;
+            padding: 10px;
+            margin-bottom: 20px;
+            overflow: hidden;
+        }
+
+        .product img {
+            width: 100%;
+            height: auto;
+        }
+
+        .product h2 {
+            margin-top: 0;
+        }
+
+        .product p {
+            margin: 5px 0;
+        }
+
+        footer {
+            background-color: #333;
+            color: #fff;
+            text-align: center;
+            padding: 10px 0;
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+        }
+    </style>
+</head>
+<body id=container>
+    <header>
+        <h1>Online Shop</h1>
+    </header>
+    
+    <div class=container>
+        <div class=product>
+            <img src=product1.jpg alt="Product 1">
+            <h2>Product 1</h2>
+            <p>Description of Product 1</p>
+            <p>Price: $XX.XX</p>
+            <button>Add to Cart</button>
+        </div>
+        
+        <div class=product>
+            <img src=product2.jpg alt="Product 2">
+            <h2>Product 2</h2>
+            <p>Description of Product 2</p>
+            <p>Price: $XX.XX</p>
+            <button>Add to Cart</button>
+        </div>
+
+        <!-- Add more products as needed -->
+    </div>
+
+    <footer>
+        <p>&copy; 2024 Online Shop</p>
+    </footer>
+</body>
+</html>`;
+
+const htmlTxt = `
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Recommended Books</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            color: #333;
+            line-height: 1.6;
+        }
+
+        header {
+            background-color: #4CAF50;
+            color: white;
+            padding: 1rem 0;
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        h1 {
+            margin: 0;
+        }
+
+        main {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 0 1rem;
+        }
+
+        .book-list {
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+        }
+
+        .book-item {
+            background-color: white;
+            padding: 1rem;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .book-title {
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .book-author,
+        .book-description {
+            font-size: 1rem;
+            margin-bottom: 0.5rem;
+        }
+    </style>
+</head>
+<body id=container>
+    <header>
+        <h1>Recommended Books</h1>
+    </header>
+    <main>
+        <div class="book-list">
+            <div class="book-item">
+                <h2 class="book-title">Book Title 1</h2>
+                <p class="book-author">Author: Author Name 1</p>
+                <p class="book-description">Description: This is a brief description of Book Title 1.</p>
+            </div>
+            <div class="book-item">
+                <h2 class="book-title">Book Title 2</h2>
+                <p class="book-author">Author: Author Name 2</p>
+                <p class="book-description">Description: This is a brief description of Book Title 2.</p>
+            </div>
+            <div class="book-item">
+                <h2 class="book-title">Book Title 3</h2>
+                <p class="book-author">Author: Author Name 3</p>
+                <p class="book-description">Description: This is a brief description of Book Title 3.</p>
+            </div>
+        </div>
+    </main>
+</body>
+</html>
+`
 export function getHtml() : Document{
 
     const parser = new DOMParser();
-    return parser.parseFromString(htmlText, 'text/html');
+    return parser.parseFromString(htmlTxt, 'text/html');
 }
 
 export function inlineRemoteCSS(htmlDoc: Document): Promise<Document> {
