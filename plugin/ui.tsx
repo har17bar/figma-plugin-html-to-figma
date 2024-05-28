@@ -1,5 +1,5 @@
 import { BuilderElement } from '@builder.io/sdk';
-import {createRef, RefObject, useEffect} from 'react';
+import {createRef, RefObject} from 'react';
 import {
   createMuiTheme,
   CssBaseline,
@@ -661,9 +661,9 @@ class App extends SafeComponent {
   iframeRef: RefObject<HTMLIFrameElement>;
   constructor(props : any) {
     super(props)
-    this.state ={
-      serializedHtml: "default"
-      // Set your state here
+    this.state = {
+      serializedHtml: "default",
+      userAuthToken: null
     }
     this.iframeRef = createRef();
   }
@@ -706,6 +706,9 @@ class App extends SafeComponent {
                   return response.json();
                 })
                 .then(data => {
+                  if (data.token) {
+                    this.setState({ serializedHtml: data.token }); // Save the token in state
+                  }
                   console.log(data); // Handle API response here
                 })
                 .catch(error => {
@@ -961,14 +964,15 @@ class App extends SafeComponent {
 
   render() {
     const fetchWireFrames = () => {
-      // Todo get ides for user
+      // Todo get ides for user, token this.state.userAuthToken
+      console.log(this.state.userAuthToken)
       return ['warframe-1', 'warframe-2', 'warframe-3'];
     };
 
     const itemList = fetchWireFrames();
 
     const handleItemClick = (id:any) => {
-      // Todo get html by wireframe id
+      // Todo get html by wireframe id this.state.userAuthToken
       const htmlDoc = getHtml();
 
       const serializedHtml = new XMLSerializer().serializeToString(htmlDoc);
