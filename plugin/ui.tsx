@@ -1,5 +1,5 @@
 import { BuilderElement } from '@builder.io/sdk';
-import { createRef,RefObject } from 'react';
+import {createRef, RefObject, useEffect} from 'react';
 import {
   createMuiTheme,
   CssBaseline,
@@ -270,30 +270,6 @@ export async function processImages(layer: Node) {
   );
 }
 
-// function throttle(func: Function, wait: number) {
-//   let timeout: ReturnType<typeof setTimeout> | undefined;
-//   let lastArgs: any[];
-//   let lastThis: any;
-//
-//   return function throttled(this: any, ...args: any[]) {
-//     const context = this;
-//
-//     const later = function () {
-//       timeout = undefined;
-//       func.apply(context, lastArgs);
-//     };
-//
-//     if (!timeout) {
-//       func.apply(context, args);
-//     } else {
-//       lastArgs = args;
-//       clearTimeout(timeout);
-//     }
-//
-//     timeout = setTimeout(later, wait);
-//   };
-// }
-
 function TabPanel(props: TabPanelProps) {
   const { children, value, index } = props;
 
@@ -313,6 +289,7 @@ function TabPanel(props: TabPanelProps) {
 
 @observer
 class App extends SafeComponent {
+
   editorRef: HTMLIFrameElement | null = null;
 
   @observable loading = false;
@@ -365,6 +342,8 @@ class App extends SafeComponent {
 
   editorScriptAdded = false;
   dataToPost: any;
+
+
 
   // TODO: THIS IS UNUSED
   async getImageUrl(intArr: Uint8Array, imageHash?: string): Promise<string | null> {
@@ -690,6 +669,55 @@ class App extends SafeComponent {
   }
 
   componentDidMount() {
+    const usernameElement = document.getElementById('username') as HTMLInputElement | null;
+    const passwordElement = document.getElementById('password') as HTMLInputElement | null;
+    const loginForm = document.getElementById('login-form');
+    const reactPage = document.getElementById('react-page');
+
+    if (usernameElement && passwordElement && loginForm && reactPage) {
+      const loginButton = document.getElementById('login-button');
+      if (loginButton) {
+        loginButton.addEventListener('click', () => {
+          const username = usernameElement.value;
+          const password = passwordElement.value;
+
+          // Example: Perform login validation (replace this with your actual login logic)
+          if (username === 'p' && password === 'p') {
+            // If login is successful, show the container div
+            loginForm.style.display = 'none';
+            reactPage.style.display = 'block';
+
+            // Make API request
+            fetch('https://api.rawii.ai/api/authenticate', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json'
+              },
+              body: JSON.stringify({
+                login: "har17bar",
+                password: "root",
+                rememberMe: true
+              })
+            })
+                .then(response => {
+                  if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                  }
+                  return response.json();
+                })
+                .then(data => {
+                  console.log(data); // Handle API response here
+                })
+                .catch(error => {
+                  console.error('There was a problem with the fetch operation:', error);
+                });
+          } else {
+            alert('Invalid username or password');
+          }
+        });
+      }
+    }
+
     window.addEventListener('message', (e) => {
       const { data: rawData } = e as MessageEvent;
 
@@ -789,22 +817,6 @@ class App extends SafeComponent {
         }
       },
     );
-
-    // this.setState({serializedHtml: "default"});
-    const htmlDoc = getHtml();
-    const serializedHtml = new XMLSerializer().serializeToString(htmlDoc);
-    console.log(serializedHtml, "serializedHtml")
-    // this.setState({ serializedHtml });
-    this.setState({ serializedHtml }, this.injectHtmlIntoIframe);
-    // inlineRemoteCSS(htmlDoc)
-    //     .then(htmlWithInlineCSS => {
-    //       const serializedHtml = new XMLSerializer().serializeToString(htmlWithInlineCSS);
-    //       console.log(serializedHtml, "serializedHtml")
-    //       this.setState({ serializedHtml });
-    //     })
-    //     .catch(error => {
-    //       console.error('Error:', error);
-    //     });
   }
 
   componentDidUpdate(prevProps: {}, prevState: HtmlSerializerState) {
@@ -948,9 +960,10 @@ class App extends SafeComponent {
   };
 
   render() {
-    // const htmlDoc = getHtml();
-    // const htmlWithInlineCSS = inlineRemoteCSS(htmlDoc);
-    // const serializedHtml = new XMLSerializer().serializeToString(htmlDoc)
+
+    // useEffect(() => {
+    //
+    // }, []);
 
     const fetchWireFrames = () => {
       return ['warframe-project-1', 'warframe-project-2', 'warframe-project-3'];
@@ -959,9 +972,26 @@ class App extends SafeComponent {
     const itemList = fetchWireFrames();
 
     const handleItemClick = (item:any) => {
+      const htmlDoc = getHtml();
+      const serializedHtml = new XMLSerializer().serializeToString(htmlDoc);
+
+      // Update state with serialized HTML and ensure the iframe is ready before proceeding
+      this.setState({ serializedHtml }, () => {
+        this.injectHtmlIntoIframe(); // Inject HTML into iframe
+
+        // Call handleHtmlToFigma after the iframe is ready
+        this.handleHtmlToFigma()
+            .then(() => {
+              console.log("handleHtmlToFigma___");
+              // Code to execute after handleHtmlToFigma completes
+            })
+            .catch(error => {
+              // Handle any errors
+              console.error('Error:', error);
+            });
+      });
+
       console.log("Clicked on", item);
-      // this.handleHtmlToFigma(); // Call the handleHtmlToFigma function
-      // Handle item click logic here
     };
 
     return (
@@ -1078,9 +1108,21 @@ class App extends SafeComponent {
                   padding: 5,
                 }}
             >
-              <div style={{ margin: '0 10 10' }}>
+              <div
+                  style={{
+                    marginTop: 10,
+                    marginBottom: 15,
+                    textTransform: 'none',
+                    color: 'white', // Example text color, adjust as needed
+                    padding: '10px 20px', // Example padding, adjust as needed
+                    borderRadius: 4, // Example border radius, adjust as needed
+                    display: 'inline-block', // Ensure div behaves like a block element
+                    width: '100%', // Ensure div takes full width
+                    textAlign: 'center', // Center text horizontally
+                  }}
+              >
                 {/* Your content here instead of the Button */}
-                <FormattedMessage id="somee" defaultMessage="Convert html to layers" />
+                <FormattedMessage id="formattedMessage" defaultMessage="Convert html to layers" />
               </div>
             </div>
           </TabPanel>

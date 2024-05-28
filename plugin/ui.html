@@ -46,44 +46,44 @@
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-W8MM88D2K8"></script>
 <script>
   // Function to handle login
-  document.getElementById('login-button').addEventListener('click', () => {
-    const username = document.getElementById('username').value;
-    const password = document.getElementById('password').value;
-
-    // Example: Perform login validation (replace this with your actual login logic)
-    if (username === 'p' && password === 'p') {
-      // If login is successful, show the container div
-      document.getElementById('login-form').style.display = 'none';
-      document.getElementById('react-page').style.display = 'block';
-
-      // Make API request
-      // fetch('https://api.rawii.ai/api/authenticate', {
-      //   method: 'POST',
-      //   headers: {
-      //     'Content-Type': 'application/json'
-      //   },
-      //   body: JSON.stringify({
-      //     login: "har17bar",
-      //     password: "root",
-      //     rememberMe: true
-      //   })
-      // })
-      // .then(response => {
-      //   if (!response.ok) {
-      //     throw new Error('Network response was not ok');
-      //   }
-      //   return response.json();
-      // })
-      // .then(data => {
-      //   console.log(data); // Handle API response here
-      // })
-      // .catch(error => {
-      //   console.error('There was a problem with the fetch operation:', error);
-      // });
-    } else {
-      alert('Invalid username or password');
-    }
-  });
+  // document.getElementById('login-button').addEventListener('click', () => {
+  //   const username = document.getElementById('username').value;
+  //   const password = document.getElementById('password').value;
+  //
+  //   // Example: Perform login validation (replace this with your actual login logic)
+  //   if (username === 'p' && password === 'p') {
+  //     // If login is successful, show the container div
+  //     document.getElementById('login-form').style.display = 'none';
+  //     document.getElementById('react-page').style.display = 'block';
+  //
+  //     // Make API request
+  //     fetch('https://api.rawii.ai/api/authenticate', {
+  //       method: 'POST',
+  //       headers: {
+  //         'Content-Type': 'application/json'
+  //       },
+  //       body: JSON.stringify({
+  //         login: "har17bar",
+  //         password: "root",
+  //         rememberMe: true
+  //       })
+  //     })
+  //     .then(response => {
+  //       if (!response.ok) {
+  //         throw new Error('Network response was not ok');
+  //       }
+  //       return response.json();
+  //     })
+  //     .then(data => {
+  //       console.log(data); // Handle API response here
+  //     })
+  //     .catch(error => {
+  //       console.error('There was a problem with the fetch operation:', error);
+  //     });
+  //   } else {
+  //     alert('Invalid username or password');
+  //   }
+  // });
 
   // Google Analytics
   window.dataLayer = window.dataLayer || [];
