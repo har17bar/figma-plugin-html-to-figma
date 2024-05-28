@@ -961,13 +961,16 @@ class App extends SafeComponent {
 
   render() {
     const fetchWireFrames = () => {
-      return ['warframe-project-1', 'warframe-project-2', 'warframe-project-3'];
+      // Todo get ides for user
+      return ['warframe-1', 'warframe-2', 'warframe-3'];
     };
 
     const itemList = fetchWireFrames();
 
-    const handleItemClick = (item:any) => {
+    const handleItemClick = (id:any) => {
+      // Todo get html by wireframe id
       const htmlDoc = getHtml();
+
       const serializedHtml = new XMLSerializer().serializeToString(htmlDoc);
 
       // Update state with serialized HTML and ensure the iframe is ready before proceeding
@@ -985,7 +988,7 @@ class App extends SafeComponent {
             });
       });
 
-      console.log("Clicked on", item);
+      console.log("Clicked on", id);
     };
 
     return (
@@ -1046,10 +1049,10 @@ class App extends SafeComponent {
         <iframe id="html_to_figma_layer_id" ref={this.iframeRef} style={{ width: '100%', height: '500px',position: "absolute", left: "-9999px" }} />
         <div style={{ width: '200px' }}> {/* Adjust the marginLeft according to your layout */}
           <ul style={{ listStyleType: 'none', padding: 0, margin: 0 }}>
-            {itemList.map((item, index) => (
+            {itemList.map((id, index) => (
                 <li
                     key={index}
-                    onClick={() => handleItemClick(item)}
+                    onClick={() => handleItemClick(id)}
                     style={{
                       cursor: 'pointer',
                       padding: '10px 15px',
@@ -1067,7 +1070,7 @@ class App extends SafeComponent {
                       (e.target as HTMLElement).style.transform = 'scale(1)'; // Reset scale
                     }}
                 >
-                  {item}
+                 id: {id}
                 </li>
             ))}
           </ul>
