@@ -1,3 +1,5 @@
+import { convertHtmlToLayerId } from '../utils';
+
 const htmlText = `<!DOCTYPE html>
 <html lang="en">
 <head>
@@ -151,7 +153,7 @@ const htmlTxt = `
         }
     </style>
 </head>
-<body id=container>
+<body>
     <header>
         <h1>Recommended Books</h1>
     </header>
@@ -177,9 +179,17 @@ const htmlTxt = `
 </body>
 </html>
 `;
-export function getHtml(): Document {
+export function getHtml(wireframeId: string): Document {
   const parser = new DOMParser();
-  return parser.parseFromString(htmlTxt, 'text/html');
+  //Todo fetch htmlTxt by wireframeId and userAuthToken
+  const htmlDoc = parser.parseFromString(htmlTxt, 'text/html');
+
+  // Set the id on the body tag if it doesn't already have one
+  if (!htmlDoc.body.id) {
+    htmlDoc.body.id = convertHtmlToLayerId;
+  }
+
+  return htmlDoc;
 }
 
 export function inlineRemoteCSS(htmlDoc: Document): Promise<Document> {

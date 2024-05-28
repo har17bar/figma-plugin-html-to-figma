@@ -36,6 +36,7 @@ import { useDev } from './constants/use-dev';
 import { context, htmlToFigmaFrame } from './htmlParser/browser';
 import { LayerNode } from './htmlParser/types';
 import { getHtml } from './htmlParser/browser/getHtml';
+import { convertHtmlToLayerId } from './htmlParser/utils';
 
 // https://stackoverflow.com/a/46634877
 type Writeable<T> = { -readonly [P in keyof T]: T[P] };
@@ -886,7 +887,7 @@ class App extends SafeComponent {
     if (iframe) {
       try {
         setContext(iframe.contentWindow as Window);
-        const data = await htmlToFigmaFrame('#root,#container');
+        const data = await htmlToFigmaFrame('#' + convertHtmlToLayerId);
         console.log('Figma Data:', data);
         sendToFigma(data);
       } catch (error) {
@@ -1003,9 +1004,9 @@ class App extends SafeComponent {
 
     const itemList = fetchWireFrames();
 
-    const handleItemClick = (id: any) => {
+    const handleItemClick = (wireframeId: string) => {
       // Todo get html by wireframe id this.state.userAuthToken
-      const htmlDoc = getHtml();
+      const htmlDoc = getHtml(wireframeId);
 
       const serializedHtml = new XMLSerializer().serializeToString(htmlDoc);
 
@@ -1024,7 +1025,7 @@ class App extends SafeComponent {
           });
       });
 
-      console.log('Clicked on', id);
+      console.log('Clicked on', wireframeId);
     };
 
     return (

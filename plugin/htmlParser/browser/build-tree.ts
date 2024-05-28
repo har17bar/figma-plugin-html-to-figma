@@ -1,4 +1,4 @@
-import {  traverse } from '../utils';
+import { traverse } from '../utils';
 import { LayerNode, WithRef } from '../types';
 
 function getParent(layer: LayerNode, root: WithRef<FrameNode>) {

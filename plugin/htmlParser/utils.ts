@@ -225,6 +225,8 @@ export function getImageFills(layer: RectangleNode | TextNode) {
 
 export const defaultPlaceholderColor = getRgb('rgba(178, 178, 178, 1)');
 
+export const convertHtmlToLayerId = 'container-to-convert-layer';
+
 // export function traverseMap<T>(
 //   layer: T,
 //   cb: (layer: T, parent: T | null) => T | undefined,
