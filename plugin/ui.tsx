@@ -960,11 +960,6 @@ class App extends SafeComponent {
   };
 
   render() {
-
-    // useEffect(() => {
-    //
-    // }, []);
-
     const fetchWireFrames = () => {
       return ['warframe-project-1', 'warframe-project-2', 'warframe-project-3'];
     };
@@ -982,7 +977,6 @@ class App extends SafeComponent {
         // Call handleHtmlToFigma after the iframe is ready
         this.handleHtmlToFigma()
             .then(() => {
-              console.log("handleHtmlToFigma___");
               // Code to execute after handleHtmlToFigma completes
             })
             .catch(error => {
@@ -1051,19 +1045,32 @@ class App extends SafeComponent {
         {/*<div style={{position: "absolute", left: "-9999px"}} dangerouslySetInnerHTML={{ __html: this.state.serializedHtml }} id="html_to_figma_layer_id"/>*/}
         <iframe id="html_to_figma_layer_id" ref={this.iframeRef} style={{ width: '100%', height: '500px',position: "absolute", left: "-9999px" }} />
         <div style={{ width: '200px' }}> {/* Adjust the marginLeft according to your layout */}
-        <ul>
-          {itemList.map((item, index) => (
-              <li
-                  key={index}
-                  onClick={() => handleItemClick(item)}
-                  style={{ cursor: 'pointer' }}
-                  onMouseEnter={(e) => (e.target as HTMLElement).style.backgroundColor = 'lightgray'}
-                  onMouseLeave={(e) => (e.target as HTMLElement).style.backgroundColor = 'white'}
-              >
-                {item}
-              </li>
-          ))}
-        </ul>
+          <ul style={{ listStyleType: 'none', padding: 0, margin: 0 }}>
+            {itemList.map((item, index) => (
+                <li
+                    key={index}
+                    onClick={() => handleItemClick(item)}
+                    style={{
+                      cursor: 'pointer',
+                      padding: '10px 15px',
+                      marginBottom: '5px',
+                      backgroundColor: '#f9f9f9', // Light gray background
+                      borderRadius: '4px', // Rounded corners
+                      transition: 'background-color 0.3s, transform 0.3s', // Smooth transition
+                    }}
+                    onMouseEnter={(e) => {
+                      (e.target as HTMLElement).style.backgroundColor = '#e0e0e0'; // Darker gray on hover
+                      (e.target as HTMLElement).style.transform = 'scale(1.02)'; // Slightly larger on hover
+                    }}
+                    onMouseLeave={(e) => {
+                      (e.target as HTMLElement).style.backgroundColor = '#f9f9f9';
+                      (e.target as HTMLElement).style.transform = 'scale(1)'; // Reset scale
+                    }}
+                >
+                  {item}
+                </li>
+            ))}
+          </ul>
         </div>
         </body>
         </html>
@@ -1113,12 +1120,14 @@ class App extends SafeComponent {
                     marginTop: 10,
                     marginBottom: 15,
                     textTransform: 'none',
-                    color: 'white', // Example text color, adjust as needed
-                    padding: '10px 20px', // Example padding, adjust as needed
-                    borderRadius: 4, // Example border radius, adjust as needed
+                    backgroundColor: '#007bff', // Blue background color
+                    color: 'white', // White text color
+                    padding: '10px 20px', // Padding for content
+                    borderRadius: 4, // Rounded corners
                     display: 'inline-block', // Ensure div behaves like a block element
                     width: '100%', // Ensure div takes full width
                     textAlign: 'center', // Center text horizontally
+                    transition: 'background-color 0.3s', // Smooth transition for background color change
                   }}
               >
                 {/* Your content here instead of the Button */}

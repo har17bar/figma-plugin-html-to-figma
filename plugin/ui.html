@@ -7,21 +7,55 @@
   <title>Figma Plugin Login</title>
   <style>
     body {
-      background: white !important;
+      background: #f0f0f0; /* Light gray background */
       margin: 0;
       padding: 0;
+      font-family: Arial, sans-serif; /* Use a common font */
     }
 
-    input {
+    #login-form {
+      background: #fff; /* White background for the form */
+      max-width: 300px; /* Set maximum width */
+      margin: 50px auto; /* Center the form */
+      padding: 20px;
+      border-radius: 8px; /* Rounded corners */
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* Drop shadow effect */
+    }
+
+    #login-form label {
       display: block;
-      margin-bottom: 10px;
+      margin-bottom: 5px;
+    }
+
+    #login-form input[type="text"],
+    #login-form input[type="password"] {
+      width: 100%;
+      padding: 10px;
+      margin-bottom: 15px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      box-sizing: border-box;
+    }
+
+    #login-button {
+      width: 100%;
+      padding: 10px;
+      background-color: #007bff; /* Blue button color */
+      color: #fff;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+
+    #login-button:hover {
+      background-color: #0056b3; /* Darker blue on hover */
     }
 
     #react-page {
       display: none; /* Initially hide the container */
     }
   </style>
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/thomas-lowry/figma-plugin-ds/dist/figma-plugin-ds.css">
 </head>
 
 <body>
@@ -32,11 +66,11 @@
   <label for="password">Password</label>
   <input type="password" id="password">
 
-  <button class="button button--primary" id="login-button">Login</button>
+  <button id="login-button">Login</button>
 </div>
 
+<!-- Your React content goes here -->
 <div id="react-page" class="container">
-  <!-- Your React content goes here -->
   <div style="display: flex; flex-direction: column; align-items: stretch">
     <img style="margin: 100px auto; width: 30px; height: 30px" src="https://cdn.builder.io/api/v1/image/assets%2FYJIGb4i01jvw0SRdL5Bt%2F0ea05b817e7040c39ec81987611542d7" />
   </div>
@@ -45,76 +79,8 @@
 <!-- Global site tag (gtag.js) - Google Analytics -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-W8MM88D2K8"></script>
 <script>
-  // Function to handle login
-  // document.getElementById('login-button').addEventListener('click', () => {
-  //   const username = document.getElementById('username').value;
-  //   const password = document.getElementById('password').value;
-  //
-  //   // Example: Perform login validation (replace this with your actual login logic)
-  //   if (username === 'p' && password === 'p') {
-  //     // If login is successful, show the container div
-  //     document.getElementById('login-form').style.display = 'none';
-  //     document.getElementById('react-page').style.display = 'block';
-  //
-  //     // Make API request
-  //     fetch('https://api.rawii.ai/api/authenticate', {
-  //       method: 'POST',
-  //       headers: {
-  //         'Content-Type': 'application/json'
-  //       },
-  //       body: JSON.stringify({
-  //         login: "har17bar",
-  //         password: "root",
-  //         rememberMe: true
-  //       })
-  //     })
-  //     .then(response => {
-  //       if (!response.ok) {
-  //         throw new Error('Network response was not ok');
-  //       }
-  //       return response.json();
-  //     })
-  //     .then(data => {
-  //       console.log(data); // Handle API response here
-  //     })
-  //     .catch(error => {
-  //       console.error('There was a problem with the fetch operation:', error);
-  //     });
-  //   } else {
-  //     alert('Invalid username or password');
-  //   }
-  // });
-
-  // Google Analytics
-  window.dataLayer = window.dataLayer || [];
-  function gtag() {
-    dataLayer.push(arguments);
-  }
-  gtag("js", new Date());
-  gtag("config", "G-W8MM88D2K8");
+  // Your JavaScript code goes here
 </script>
 </body>
 
 </html>
-<style>
-  body {
-    background: white !important;
-    margin: 0;
-    padding: 0;
-  }
-</style>
-
-<!-- Global site tag (gtag.js) - Google Analytics -->
-<script
-        async
-        src="https://www.googletagmanager.com/gtag/js?id=G-W8MM88D2K8"
-></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag() {
-    dataLayer.push(arguments);
-  }
-  gtag("js", new Date());
-
-  gtag("config", "G-W8MM88D2K8");
-</script>
