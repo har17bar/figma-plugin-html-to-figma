@@ -3,8 +3,8 @@
  * This code is borrowed from https://www.figma.com/plugin-docs/working-with-images/
  */
 export const transformWebpToPNG = async (bytes: Uint8Array) => {
-  const canvas = document.createElement("canvas");
-  const ctx = canvas.getContext("2d")!;
+  const canvas = document.createElement('canvas');
+  const ctx = canvas.getContext('2d')!;
 
   const imageData = await decode(canvas, ctx, bytes);
   const newBytes = await encode(canvas, ctx, imageData);
@@ -26,7 +26,7 @@ function encode(
 
       reader.onload = () =>
         resolve(new Uint8Array(reader.result as ArrayBuffer));
-      reader.onerror = () => reject(new Error("Could not read from blob"));
+      reader.onerror = () => reject(new Error('Could not read from blob'));
       reader.readAsArrayBuffer(blob!);
     });
   });

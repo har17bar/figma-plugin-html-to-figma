@@ -1,8 +1,8 @@
-import { LayerNode } from "../types/nodes";
+import { LayerNode } from '../types/nodes';
 
 export const processSvgUseElements = (el: Element) => {
   // Process SVG <use> elements
-  for (const use of Array.from(el.querySelectorAll("use"))) {
+  for (const use of Array.from(el.querySelectorAll('use'))) {
     try {
       const symbolSelector = use.href.baseVal;
       const symbol: SVGSymbolElement | null =
@@ -11,7 +11,7 @@ export const processSvgUseElements = (el: Element) => {
         use.outerHTML = symbol.innerHTML;
       }
     } catch (err) {
-      console.warn("Error querying <use> tag href", err);
+      console.warn('Error querying <use> tag href', err);
     }
   }
 };
@@ -22,7 +22,7 @@ export const createSvgLayer = (el: SVGSVGElement) => {
   // TODO: pull in CSS/computed styles
   // TODO: may need to pull in layer styles too like shadow, bg color, etc
   const layer: LayerNode = {
-    type: "SVG",
+    type: 'SVG',
     ref: el,
     svg: el.outerHTML,
     x: Math.round(rect.left),

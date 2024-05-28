@@ -1,6 +1,6 @@
-import { SvgIcon } from "@material-ui/core";
-import { SvgIconProps } from "@material-ui/core/SvgIcon";
-import * as React from "react";
+import { SvgIcon } from '@material-ui/core';
+import { SvgIconProps } from '@material-ui/core/SvgIcon';
+import * as React from 'react';
 
 export const MobileIcon = (props: SvgIconProps) => (
   <SvgIcon style={{ width: 10 }} viewBox="0 0 13 16">

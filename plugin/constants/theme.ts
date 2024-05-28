@@ -7,16 +7,16 @@ export const theme = {
     formMaxWidth: 700,
   },
   colors: {
-    primary: "rgba(26, 115, 231, 1)",
-    primaryDark: "rgb(8, 108, 193)",
-    primaryLight: "rgb(7, 178, 215)",
+    primary: 'rgba(26, 115, 231, 1)',
+    primaryDark: 'rgb(8, 108, 193)',
+    primaryLight: 'rgb(7, 178, 215)',
     get primaryGradient() {
       return `linear-gradient(90deg, ${this.primary} 0px, ${this.primaryLight})`;
     },
     primaryWithOpacity(opacity: number) {
-      return this.primary.replace("1)", opacity + ")");
+      return this.primary.replace('1)', opacity + ')');
     },
-    green: "#00e676",
+    green: '#00e676',
     // Aliases
     get success() {
       return this.green;
@@ -26,7 +26,7 @@ export const theme = {
     },
   },
   fonts: {
-    base: "",
+    base: '',
   },
   studio: {
     tabs: {} as React.CSSProperties,
@@ -34,10 +34,10 @@ export const theme = {
     sideBar: {} as React.CSSProperties,
   },
   transitions: {
-    easing: "cubic-bezier(.37,.01,0,.98)",
+    easing: 'cubic-bezier(.37,.01,0,.98)',
 
     for(...properties: string[]) {
-      return properties.map((item) => `${item} 0.3s ${this.easing}`).join(", ");
+      return properties.map((item) => `${item} 0.3s ${this.easing}`).join(', ');
     },
   },
 };

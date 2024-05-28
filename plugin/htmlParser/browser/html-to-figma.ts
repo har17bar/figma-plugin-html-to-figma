@@ -4,185 +4,183 @@ import { addConstraintToLayer } from './add-constraints';
 import { context } from './utils';
 import { traverse, traverseMap } from '../utils';
 import { ElemTypes, isElemType } from './dom-utils';
-import {setAutoLayoutProps} from "./addAutoLayoutProps";
+import { setAutoLayoutProps } from './addAutoLayoutProps';
 
-const removeMeta = (layerWithMeta: WithMeta<LayerNode>): LayerNode | undefined => {
-    const {
-        textValue,
-        before,
-        after,
-        borders,
-        ref,
-        type,
-        zIndex,
-        isAutoLayout,
-        ...rest
-    } = layerWithMeta;
+const removeMeta = (
+  layerWithMeta: WithMeta<LayerNode>
+): LayerNode | undefined => {
+  const {
+    textValue,
+    before,
+    after,
+    borders,
+    ref,
+    type,
+    zIndex,
+    isAutoLayout,
+    ...rest
+  } = layerWithMeta;
 
-    if (!type) return;
+  if (!type) return;
 
-    return { type, ...rest } as PlainLayerNode;
-}
+  return { type, ...rest } as PlainLayerNode;
+};
 
 const mapDOM = async (root: Element): Promise<LayerNode> => {
-    const elems: WithMeta<LayerNode>[] = [];
-    const walk = context.document.createTreeWalker(
-        root,
-        NodeFilter.SHOW_ALL,
-        null,
-        // false
-    );
-    const refs = new Map<Element, MetaLayerNode[]>();
+  const elems: WithMeta<LayerNode>[] = [];
+  const walk = context.document.createTreeWalker(
+    root,
+    NodeFilter.SHOW_ALL,
+    null
+    // false
+  );
+  const refs = new Map<Element, MetaLayerNode[]>();
 
-    let n: Node | null = walk.currentNode;
+  let n: Node | null = walk.currentNode;
 
-    do {
-        if (!n.parentElement) continue;
-        const figmaEl = await elementToFigma(n as Element);
-        console.log('figmaEl', figmaEl)
-        const el = n as Element;
-        const isAutoLayout =
-            isElemType(el, ElemTypes.Element) && el.getAttribute('data-auto-layout')==='true' || false;
+  do {
+    if (!n.parentElement) continue;
+    const figmaEl = await elementToFigma(n as Element);
+    console.log('figmaEl', figmaEl);
+    const el = n as Element;
+    const isAutoLayout =
+      (isElemType(el, ElemTypes.Element) &&
+        el.getAttribute('data-auto-layout') === 'true') ||
+      false;
 
-        if (figmaEl) {
-            addConstraintToLayer(figmaEl, n as HTMLElement);
+    if (figmaEl) {
+      addConstraintToLayer(figmaEl, n as HTMLElement);
 
-            const children = refs.get(n.parentElement) || [];
-            refs.set(n.parentElement, [...children, figmaEl]);
-            elems.push(figmaEl as WithMeta<LayerNode>);
+      const children = refs.get(n.parentElement) || [];
+      refs.set(n.parentElement, [...children, figmaEl]);
+      elems.push(figmaEl as WithMeta<LayerNode>);
 
-            if(isAutoLayout) {
-                setAutoLayoutProps(figmaEl, getComputedStyle(el));
-            }
-        }
-    } while (n = walk.nextNode());
-
-    const result = elems[0];
-
-    for (let i = 0;i < elems.length; i++) {
-        const elem = elems[i];
-        if (elem.type !== 'FRAME') continue;
-
-        elem.children = elem.children || [];
-
-        elem.before && elem.children.push(elem.before);
-
-        const children = refs.get(elem.ref as Element) || [];
-
-        children && elem.children.push(...children);
-        // elements with text
-        if (!elem.textValue) {
-            elem.children = elem.children.filter(Boolean);
-        } else {
-            elem.children = [elem.textValue];
-        }
-        // extends elements for show complex borders
-        if (elem.borders) {
-            elem.children = elem.children.concat(elem.borders);
-        }
-        elem.after && elem.children.push(elem.after);
-
-        elem.children.sort((a, b) => (b.zIndex || 0) - (a.zIndex || 0));
+      if (isAutoLayout) {
+        setAutoLayoutProps(figmaEl, getComputedStyle(el));
+      }
     }
+  } while ((n = walk.nextNode()));
 
-    // @ts-expect-error
-    const layersWithoutMeta = traverseMap<WithMeta<LayerNode>>(result, (layer) => {
-        return removeMeta(layer);
-    }) as LayerNode;
-    // Update all positions and clean
-    traverse(layersWithoutMeta, (layer) => {
-        if (layer.type === 'FRAME' || layer.type === 'GROUP') {
-            const { x, y } = layer;
-            if (x || y) {
-                traverse(layer, (child) => {
-                    if (child === layer) {
-                        return;
-                    }
-                    child.x = child.x! - x!;
-                    child.y = child.y! - y!;
-                });
-            }
-        }
-    });
+  const result = elems[0];
 
-    return layersWithoutMeta;
-}
+  for (let i = 0; i < elems.length; i++) {
+    const elem = elems[i];
+    if (elem.type !== 'FRAME') continue;
+
+    elem.children = elem.children || [];
+
+    elem.before && elem.children.push(elem.before);
+
+    const children = refs.get(elem.ref as Element) || [];
+
+    children && elem.children.push(...children);
+    // elements with text
+    if (!elem.textValue) {
+      elem.children = elem.children.filter(Boolean);
+    } else {
+      elem.children = [elem.textValue];
+    }
+    // extends elements for show complex borders
+    if (elem.borders) {
+      elem.children = elem.children.concat(elem.borders);
+    }
+    elem.after && elem.children.push(elem.after);
+
+    elem.children.sort((a, b) => (b.zIndex || 0) - (a.zIndex || 0));
+  }
+
+  const layersWithoutMeta = traverseMap<WithMeta<LayerNode>>(
+    result,
+    (layer, parent) => {
+      const cleanedLayer = removeMeta(layer);
+      return cleanedLayer as WithMeta<LayerNode>;
+    }
+  ) as LayerNode;
+  // Update all positions and clean
+  traverse(layersWithoutMeta, (layer) => {
+    if (layer.type === 'FRAME' || layer.type === 'GROUP') {
+      const { x, y } = layer;
+      if (x || y) {
+        traverse(layer, (child) => {
+          if (child === layer) {
+            return;
+          }
+          child.x = child.x! - x!;
+          child.y = child.y! - y!;
+        });
+      }
+    }
+  });
+
+  return layersWithoutMeta;
+};
 
 export async function htmlToFigmaFrame(
-    selector: HTMLElement | string = 'body',
+  selector: HTMLElement | string = 'body'
 ) {
-    let layers: LayerNode[] = [];
-    const el =
-        isElemType(selector as HTMLElement, ElemTypes.Element)
-            ? selector as HTMLElement
-            : context.document.querySelectorAll(selector as string || 'body')[0];
+  let layers: LayerNode[] = [];
+  const el = isElemType(selector as HTMLElement, ElemTypes.Element)
+    ? (selector as HTMLElement)
+    : context.document.querySelectorAll((selector as string) || 'body')[0];
 
-    if (!el) {
-        throw Error(`Element not found`);
+  if (!el) {
+    throw Error(`Element not found`);
+  }
+
+  console.warn('Element tree:', el.innerHTML);
+
+  // Process SVG <use> elements
+  for (const use of Array.from(el.querySelectorAll('use')) as SVGUseElement[]) {
+    try {
+      const symbolSelector = use.href.baseVal;
+      const symbol: SVGSymbolElement | null =
+        context.document.querySelector(symbolSelector);
+      if (symbol) {
+        use.outerHTML = symbol.innerHTML;
+      }
+    } catch (err) {
+      console.warn('Error querying <use> tag href', err);
     }
+  }
 
-    console.warn('Element tree:', el.innerHTML);
+  // const els = (Array.from(el.querySelectorAll('*')) as Element[]).reduce(
+  //     (memo, el) => {
+  //         memo.push(el);
+  //         memo.push(...getShadowEls(el));
 
-    // Process SVG <use> elements
-    for (const use of Array.from(
-        el.querySelectorAll('use')
-    ) as SVGUseElement[]) {
-        try {
-            const symbolSelector = use.href.baseVal;
-            const symbol: SVGSymbolElement | null =
-                context.document.querySelector(symbolSelector);
-            if (symbol) {
-                use.outerHTML = symbol.innerHTML;
-            }
-        } catch (err) {
-            console.warn('Error querying <use> tag href', err);
-        }
-    }
+  //         return memo;
+  //     },
+  //     [] as Element[]
+  // );
+  const data = await mapDOM(el);
 
-    // const els = (Array.from(el.querySelectorAll('*')) as Element[]).reduce(
-    //     (memo, el) => {
-    //         memo.push(el);
-    //         memo.push(...getShadowEls(el));
-
-    //         return memo;
-    //     },
-    //     [] as Element[]
-    // );
-    const data = await mapDOM(el);
-
-    return data ? [data] : [];
+  return data ? [data] : [];
 }
 
-export async function htmlToFigma(
-    selector: HTMLElement | string = 'body',
-) {
+export async function htmlToFigma(selector: HTMLElement | string = 'body') {
+  const el = isElemType(selector as HTMLElement, ElemTypes.Element)
+    ? (selector as HTMLElement)
+    : context.document.querySelectorAll((selector as string) || 'body')[0];
+  if (!el) {
+    throw Error(`Element not found`);
+  }
 
-    const el =
-        isElemType(selector as HTMLElement, ElemTypes.Element)
-            ? selector as HTMLElement
-            : context.document.querySelectorAll(selector as string || 'body')[0];
-    if (!el) {
-        throw Error(`Element not found`);
+  console.warn('Element tree:', el.innerHTML);
+
+  // Process SVG <use> elements
+  for (const use of Array.from(el.querySelectorAll('use')) as SVGUseElement[]) {
+    try {
+      const symbolSelector = use.href.baseVal;
+      const symbol: SVGSymbolElement | null =
+        context.document.querySelector(symbolSelector);
+      if (symbol) {
+        use.outerHTML = symbol.innerHTML;
+      }
+    } catch (err) {
+      console.warn('Error querying <use> tag href', err);
     }
+  }
 
-    console.warn('Element tree:', el.innerHTML);
-
-    // Process SVG <use> elements
-    for (const use of Array.from(
-        el.querySelectorAll('use')
-    ) as SVGUseElement[]) {
-        try {
-            const symbolSelector = use.href.baseVal;
-            const symbol: SVGSymbolElement | null =
-                context.document.querySelector(symbolSelector);
-            if (symbol) {
-                use.outerHTML = symbol.innerHTML;
-            }
-        } catch (err) {
-            console.warn('Error querying <use> tag href', err);
-        }
-    }
-
-    const data = await mapDOM(el);
-    return data ? [data] : [];
+  const data = await mapDOM(el);
+  return data ? [data] : [];
 }

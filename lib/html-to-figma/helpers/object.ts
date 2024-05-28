@@ -3,4 +3,4 @@ export function size(obj: object) {
 }
 
 export const fastClone = (data: any) =>
-  typeof data === "symbol" ? null : JSON.parse(JSON.stringify(data));
+  typeof data === 'symbol' ? null : JSON.parse(JSON.stringify(data));

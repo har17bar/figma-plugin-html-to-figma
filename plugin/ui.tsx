@@ -1,5 +1,5 @@
 import { BuilderElement } from '@builder.io/sdk';
-import {createRef, RefObject} from 'react';
+import { createRef, RefObject } from 'react';
 import {
   createMuiTheme,
   CssBaseline,
@@ -33,9 +33,9 @@ import { CheckListContent } from './constants/utils';
 import * as amplitude from './functions/track';
 import { v4 as uuid } from 'uuid';
 import { useDev } from './constants/use-dev';
-import {context, htmlToFigmaFrame} from './htmlParser/browser';
+import { context, htmlToFigmaFrame } from './htmlParser/browser';
 import { LayerNode } from './htmlParser/types';
-import {getHtml} from "./htmlParser/browser/getHtml";
+import { getHtml } from './htmlParser/browser/getHtml';
 
 // https://stackoverflow.com/a/46634877
 type Writeable<T> = { -readonly [P in keyof T]: T[P] };
@@ -44,9 +44,7 @@ interface HtmlSerializerState {
   serializedHtml: string;
 }
 
-
 export const setContext = (window: Window) => {
-
   context.document = window.document;
   // @ts-expect-error
   context.window = window;
@@ -64,11 +62,13 @@ const sendToFigma = (layers: LayerNode) => {
         },
       },
     },
-    '*',
+    '*'
   );
 };
 
-const selectionToBuilder = async (selection: SceneNode[]): Promise<BuilderElement[]> => {
+const selectionToBuilder = async (
+  selection: SceneNode[]
+): Promise<BuilderElement[]> => {
   const useGzip = true;
 
   selection = deepClone(selection);
@@ -93,7 +93,7 @@ const selectionToBuilder = async (selection: SceneNode[]): Promise<BuilderElemen
           }
         : {
             nodes: selection,
-          },
+          }
     ),
   }).then((res) => {
     if (!res.ok) {
@@ -123,7 +123,8 @@ interface TabPanelProps {
 
 const apiKey = process.env.API_KEY || null;
 
-const clamp = (num: number, min: number, max: number) => Math.max(min, Math.min(max, num));
+const clamp = (num: number, min: number, max: number) =>
+  Math.max(min, Math.min(max, num));
 
 type Node = TextNode | RectangleNode;
 
@@ -184,10 +185,15 @@ function convertDataURIToBinary(dataURI: string) {
 }
 
 export function getImageFills(layer: Node) {
-  return Array.isArray(layer.fills) &&
+  return (
+    Array.isArray(layer.fills) &&
     layer.fills
-      .filter((item) => item.type === 'IMAGE' && item.visible !== false && item.opacity !== 0)
-      .sort((a, b) => b.opacity - a.opacity);
+      .filter(
+        (item) =>
+          item.type === 'IMAGE' && item.visible !== false && item.opacity !== 0
+      )
+      .sort((a, b) => b.opacity - a.opacity)
+  );
 }
 
 // TODO: CACHE!
@@ -240,7 +246,9 @@ export async function processImages(layer: Node) {
 
         // Proxy returned content through Builder so we can access cross origin for
         // pulling in photos, etc
-        const res = await fetch(`${apiHost}/api/v1/proxy-api?url=${encodeURIComponent(url)}`);
+        const res = await fetch(
+          `${apiHost}/api/v1/proxy-api?url=${encodeURIComponent(url)}`
+        );
 
         const contentType = res.headers.get('content-type');
         if (isSvg || contentType?.includes('svg')) {
@@ -256,7 +264,10 @@ export async function processImages(layer: Node) {
             const intArr = new Uint8Array(arrayBuffer);
             delete image.url;
 
-            if (type && (type.ext.includes('webp') || type.mime.includes('image/webp'))) {
+            if (
+              type &&
+              (type.ext.includes('webp') || type.mime.includes('image/webp'))
+            ) {
               image.intArr = await transformWebpToPNG(intArr);
             } else {
               image.intArr = intArr;
@@ -266,7 +277,7 @@ export async function processImages(layer: Node) {
       } catch (err) {
         console.warn('Could not fetch image', layer, err);
       }
-    }),
+    })
   );
 }
 
@@ -289,7 +300,6 @@ function TabPanel(props: TabPanelProps) {
 
 @observer
 class App extends SafeComponent {
-
   editorRef: HTMLIFrameElement | null = null;
 
   @observable loading = false;
@@ -335,7 +345,8 @@ class App extends SafeComponent {
       id: '1a',
       data: {
         type: 'during',
-        textContent: 'Getting everything ready... This can take a few minutes to complete.',
+        textContent:
+          'Getting everything ready... This can take a few minutes to complete.',
       },
     },
   ];
@@ -343,10 +354,11 @@ class App extends SafeComponent {
   editorScriptAdded = false;
   dataToPost: any;
 
-
-
   // TODO: THIS IS UNUSED
-  async getImageUrl(intArr: Uint8Array, imageHash?: string): Promise<string | null> {
+  async getImageUrl(
+    intArr: Uint8Array,
+    imageHash?: string
+  ): Promise<string | null> {
     const hash = imageHash ?? md5.ArrayBuffer.hash(intArr);
     const fromCache = hash && this.clientStorage?.imageUrlsByHash?.[hash];
 
@@ -409,7 +421,7 @@ class App extends SafeComponent {
           data: fastClone(this.clientStorage),
         },
       },
-      '*',
+      '*'
     );
   }
 
@@ -440,7 +452,7 @@ class App extends SafeComponent {
           '(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*' + // port and path
           '(\\?[;&a-z\\d%_.~+=-]*)?' + // query string
           '(\\#[-a-z\\d_]*)?$',
-        'i',
+        'i'
       ); // fragment locator
       return !!pattern.test(str);
     }
@@ -469,7 +481,7 @@ class App extends SafeComponent {
             type: 'getSelectionWithImages',
           },
         },
-        '*',
+        '*'
       );
 
       this.generatingCode = true;
@@ -488,7 +500,9 @@ class App extends SafeComponent {
     // suggest in the UI what needs grouping
     let selectionToBuilderPromise;
     if (!this.inDevMode) {
-      selectionToBuilderPromise = selectionToBuilder(this.selectionWithImages as any).catch((err) => {
+      selectionToBuilderPromise = selectionToBuilder(
+        this.selectionWithImages as any
+      ).catch((err) => {
         this.loadingGenerate = false;
         this.generatingCode = false;
         this.showRequestFailedError = true;
@@ -532,7 +546,7 @@ class App extends SafeComponent {
                   });
                   delete (node as any).intArr;
                   imageMap[node.id] = id;
-                })(),
+                })()
               );
             }
           });
@@ -581,7 +595,7 @@ class App extends SafeComponent {
             type: 'checkIfCanGetCode',
           },
         },
-        '*',
+        '*'
       );
     }
 
@@ -659,18 +673,22 @@ class App extends SafeComponent {
 
   @observable initialized = false;
   iframeRef: RefObject<HTMLIFrameElement>;
-  constructor(props : any) {
-    super(props)
+  constructor(props: any) {
+    super(props);
     this.state = {
-      serializedHtml: "default",
-      userAuthToken: null
-    }
+      serializedHtml: 'default',
+      userAuthToken: null,
+    };
     this.iframeRef = createRef();
   }
 
   componentDidMount() {
-    const usernameElement = document.getElementById('username') as HTMLInputElement | null;
-    const passwordElement = document.getElementById('password') as HTMLInputElement | null;
+    const usernameElement = document.getElementById(
+      'username'
+    ) as HTMLInputElement | null;
+    const passwordElement = document.getElementById(
+      'password'
+    ) as HTMLInputElement | null;
     const loginForm = document.getElementById('login-form');
     const reactPage = document.getElementById('react-page');
 
@@ -691,29 +709,32 @@ class App extends SafeComponent {
             fetch('https://api.rawii.ai/api/authenticate', {
               method: 'POST',
               headers: {
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
               },
               body: JSON.stringify({
-                login: "har17bar",
-                password: "root",
-                rememberMe: true
-              })
+                login: 'har17bar',
+                password: 'root',
+                rememberMe: true,
+              }),
             })
-                .then(response => {
-                  if (!response.ok) {
-                    throw new Error('Network response was not ok');
-                  }
-                  return response.json();
-                })
-                .then(data => {
-                  if (data.token) {
-                    this.setState({ serializedHtml: data.token }); // Save the token in state
-                  }
-                  console.log(data); // Handle API response here
-                })
-                .catch(error => {
-                  console.error('There was a problem with the fetch operation:', error);
-                });
+              .then((response) => {
+                if (!response.ok) {
+                  throw new Error('Network response was not ok');
+                }
+                return response.json();
+              })
+              .then((data) => {
+                if (data.token) {
+                  this.setState({ serializedHtml: data.token }); // Save the token in state
+                }
+                console.log(data); // Handle API response here
+              })
+              .catch((error) => {
+                console.error(
+                  'There was a problem with the fetch operation:',
+                  error
+                );
+              });
           } else {
             alert('Invalid username or password');
           }
@@ -748,7 +769,9 @@ class App extends SafeComponent {
     });
 
     this.loadingCmsData = true;
-    fetch('https://cdn.builder.io/api/v3/content/figma-modal-items?apiKey=YJIGb4i01jvw0SRdL5Bt')
+    fetch(
+      'https://cdn.builder.io/api/v3/content/figma-modal-items?apiKey=YJIGb4i01jvw0SRdL5Bt'
+    )
       .then((response) => {
         if (!response.ok) {
           console.error('Cannot fetch figma checklist', response);
@@ -760,7 +783,9 @@ class App extends SafeComponent {
         this.figmaCheckList = data;
         if (data?.results) {
           this.loaderContent = this.loaderContent.concat(
-            data.results.filter((item: CheckListContent) => item.data.type === 'during'),
+            data.results.filter(
+              (item: CheckListContent) => item.data.type === 'during'
+            )
           );
           this.loaderContent = this.loaderContent.slice().reverse();
         }
@@ -773,7 +798,7 @@ class App extends SafeComponent {
           type: 'getStorage',
         },
       },
-      '*',
+      '*'
     );
     parent.postMessage(
       {
@@ -781,13 +806,13 @@ class App extends SafeComponent {
           type: 'init',
         },
       },
-      '*',
+      '*'
     );
 
     // TODO: destroy on component unmount
     this.safeReaction(
       () => this.urlValue,
-      () => (this.errorMessage = ''),
+      () => (this.errorMessage = '')
     );
     this.selectAllUrlInputText();
 
@@ -808,7 +833,7 @@ class App extends SafeComponent {
         } else if (this.clientStorage === undefined) {
           this.clientStorage = { userId: uuid() };
         }
-      },
+      }
     );
 
     this.safeReaction(
@@ -818,7 +843,7 @@ class App extends SafeComponent {
           amplitude.setUserId(userId);
           amplitude.track('figma plugin started');
         }
-      },
+      }
     );
   }
 
@@ -831,7 +856,9 @@ class App extends SafeComponent {
   injectHtmlIntoIframe = () => {
     const iframe = this.iframeRef.current;
     if (iframe) {
-      const iframeDoc = iframe.contentDocument || (iframe.contentWindow && iframe.contentWindow.document);
+      const iframeDoc =
+        iframe.contentDocument ||
+        (iframe.contentWindow && iframe.contentWindow.document);
       if (iframeDoc) {
         iframeDoc.open();
         iframeDoc.write(this.state.serializedHtml);
@@ -849,7 +876,7 @@ class App extends SafeComponent {
             elements: fastClone(this.selection),
           },
         },
-        '*',
+        '*'
       );
     }
   };
@@ -890,9 +917,11 @@ class App extends SafeComponent {
       // Builder.io provides this for the Figma plugin for free.
       console.log(
         `${apiHost}/api/v1/url-to-figma?url=${encocedUrl}&width=${width}&useFrames=${this.useFrames}`,
-        'fethc',
+        'fethc'
       );
-      fetch(`${apiHost}/api/v1/url-to-figma?url=${encocedUrl}&width=${width}&useFrames=${this.useFrames}`)
+      fetch(
+        `${apiHost}/api/v1/url-to-figma?url=${encocedUrl}&width=${width}&useFrames=${this.useFrames}`
+      )
         .then((res) => {
           if (!res.ok) {
             console.error('Url-to-figma failed', res);
@@ -920,13 +949,16 @@ class App extends SafeComponent {
                     });
                   }
                 });
-              }),
-            ),
+              })
+            )
           );
         })
         .then((data) => {
           console.log(data[0], 'data[0]');
-          parent.postMessage({ pluginMessage: { type: 'import', data: data[0] } }, '*');
+          parent.postMessage(
+            { pluginMessage: { type: 'import', data: data[0] } },
+            '*'
+          );
         })
         .catch((err) => {
           this.loading = false;
@@ -965,13 +997,13 @@ class App extends SafeComponent {
   render() {
     const fetchWireFrames = () => {
       // Todo get ides for user, token this.state.userAuthToken
-      console.log(this.state.userAuthToken)
+      console.log(this.state.userAuthToken);
       return ['warframe-1', 'warframe-2', 'warframe-3'];
     };
 
     const itemList = fetchWireFrames();
 
-    const handleItemClick = (id:any) => {
+    const handleItemClick = (id: any) => {
       // Todo get html by wireframe id this.state.userAuthToken
       const htmlDoc = getHtml();
 
@@ -983,78 +1015,91 @@ class App extends SafeComponent {
 
         // Call handleHtmlToFigma after the iframe is ready
         this.handleHtmlToFigma()
-            .then(() => {
-              // Code to execute after handleHtmlToFigma completes
-            })
-            .catch(error => {
-              // Handle any errors
-              console.error('Error:', error);
-            });
+          .then(() => {
+            // Code to execute after handleHtmlToFigma completes
+          })
+          .catch((error) => {
+            // Handle any errors
+            console.error('Error:', error);
+          });
       });
 
-      console.log("Clicked on", id);
+      console.log('Clicked on', id);
     };
 
     return (
-      <IntlProvider messages={this.currentLanguage === 'en' ? en : ru} locale={this.currentLanguage} defaultLocale="en">
+      <IntlProvider
+        messages={this.currentLanguage === 'en' ? en : ru}
+        locale={this.currentLanguage}
+        defaultLocale="en"
+      >
         <html>
-        <head>
-          {/* Your head content here */}
-        </head>
-        <body>
-        <div
-            style={{
-              display: 'flex',
-              flexDirection: 'column',
-              overflow: 'auto',
-              alignItems: 'stretch',
-              height: '100%',
-            }}
-        >
-          <Tabs
-              variant="fullWidth"
+          <head>{/* Your head content here */}</head>
+          <body>
+            <div
               style={{
-                minHeight: 40,
-                backgroundColor: '#F9F9F9',
-                flexShrink: 0,
-                width: settings.ui.baseWidth,
-                borderRight: '1px solid #ccc',
+                display: 'flex',
+                flexDirection: 'column',
+                overflow: 'auto',
+                alignItems: 'stretch',
+                height: '100%',
               }}
-              TabIndicatorProps={{
-                style: { transition: 'none' },
-              }}
-              value={this.tabIndex}
-              onChange={this.switchTab}
-              indicatorColor="primary"
-              textColor="primary"
-          >
-            <Tab
+            >
+              <Tabs
+                variant="fullWidth"
                 style={{
                   minHeight: 40,
-                  minWidth: 0,
+                  backgroundColor: '#F9F9F9',
+                  flexShrink: 0,
+                  width: settings.ui.baseWidth,
+                  borderRight: '1px solid #ccc',
                 }}
-                label={
-                  <span
+                TabIndicatorProps={{
+                  style: { transition: 'none' },
+                }}
+                value={this.tabIndex}
+                onChange={this.switchTab}
+                indicatorColor="primary"
+                textColor="primary"
+              >
+                <Tab
+                  style={{
+                    minHeight: 40,
+                    minWidth: 0,
+                  }}
+                  label={
+                    <span
                       style={{
                         fontSize: 12,
                         fontWeight: 'bold',
                         textTransform: 'none',
                       }}
-                  >
+                    >
                       Html to Figma
                     </span>
-                }
+                  }
+                />
+              </Tabs>
+              <Divider style={{ width: settings.ui.baseWidth }} />
+            </div>
+            {/* Rendered HTML content with associated CSS styles */}
+            {/*<div style={{position: "absolute", left: "-9999px"}} dangerouslySetInnerHTML={{ __html: this.state.serializedHtml }} id="html_to_figma_layer_id"/>*/}
+            <iframe
+              id="html_to_figma_layer_id"
+              ref={this.iframeRef}
+              style={{
+                width: '100%',
+                height: '500px',
+                position: 'absolute',
+                left: '-9999px',
+              }}
             />
-          </Tabs>
-          <Divider style={{ width: settings.ui.baseWidth }} />
-        </div>
-        {/* Rendered HTML content with associated CSS styles */}
-        {/*<div style={{position: "absolute", left: "-9999px"}} dangerouslySetInnerHTML={{ __html: this.state.serializedHtml }} id="html_to_figma_layer_id"/>*/}
-        <iframe id="html_to_figma_layer_id" ref={this.iframeRef} style={{ width: '100%', height: '500px',position: "absolute", left: "-9999px" }} />
-        <div style={{ width: '200px' }}> {/* Adjust the marginLeft according to your layout */}
-          <ul style={{ listStyleType: 'none', padding: 0, margin: 0 }}>
-            {itemList.map((id, index) => (
-                <li
+            <div style={{ width: '200px' }}>
+              {' '}
+              {/* Adjust the marginLeft according to your layout */}
+              <ul style={{ listStyleType: 'none', padding: 0, margin: 0 }}>
+                {itemList.map((id, index) => (
+                  <li
                     key={index}
                     onClick={() => handleItemClick(id)}
                     style={{
@@ -1066,20 +1111,22 @@ class App extends SafeComponent {
                       transition: 'background-color 0.3s, transform 0.3s', // Smooth transition
                     }}
                     onMouseEnter={(e) => {
-                      (e.target as HTMLElement).style.backgroundColor = '#e0e0e0'; // Darker gray on hover
+                      (e.target as HTMLElement).style.backgroundColor =
+                        '#e0e0e0'; // Darker gray on hover
                       (e.target as HTMLElement).style.transform = 'scale(1.02)'; // Slightly larger on hover
                     }}
                     onMouseLeave={(e) => {
-                      (e.target as HTMLElement).style.backgroundColor = '#f9f9f9';
+                      (e.target as HTMLElement).style.backgroundColor =
+                        '#f9f9f9';
                       (e.target as HTMLElement).style.transform = 'scale(1)'; // Reset scale
                     }}
-                >
-                 id: {id}
-                </li>
-            ))}
-          </ul>
-        </div>
-        </body>
+                  >
+                    id: {id}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </body>
         </html>
         <div
           style={{
@@ -1106,39 +1153,41 @@ class App extends SafeComponent {
             onChange={this.switchTab}
             indicatorColor="primary"
             textColor="primary"
-          >
-          </Tabs>
+          ></Tabs>
           <Divider style={{ width: settings.ui.baseWidth }} />
           <TabPanel value={this.tabIndex} index={0}>
             <div
-                style={{
-                  display: 'flex',
-                  flexDirection: 'column',
-                  position: 'relative',
-                  zIndex: 3,
-                  maxWidth: settings.ui.baseWidth,
-                  fontWeight: 400,
-                  marginBottom: 10,
-                  padding: 5,
-                }}
+              style={{
+                display: 'flex',
+                flexDirection: 'column',
+                position: 'relative',
+                zIndex: 3,
+                maxWidth: settings.ui.baseWidth,
+                fontWeight: 400,
+                marginBottom: 10,
+                padding: 5,
+              }}
             >
               <div
-                  style={{
-                    marginTop: 10,
-                    marginBottom: 15,
-                    textTransform: 'none',
-                    backgroundColor: '#007bff', // Blue background color
-                    color: 'white', // White text color
-                    padding: '10px 20px', // Padding for content
-                    borderRadius: 4, // Rounded corners
-                    display: 'inline-block', // Ensure div behaves like a block element
-                    width: '100%', // Ensure div takes full width
-                    textAlign: 'center', // Center text horizontally
-                    transition: 'background-color 0.3s', // Smooth transition for background color change
-                  }}
+                style={{
+                  marginTop: 10,
+                  marginBottom: 15,
+                  textTransform: 'none',
+                  backgroundColor: '#007bff', // Blue background color
+                  color: 'white', // White text color
+                  padding: '10px 20px', // Padding for content
+                  borderRadius: 4, // Rounded corners
+                  display: 'inline-block', // Ensure div behaves like a block element
+                  width: '100%', // Ensure div takes full width
+                  textAlign: 'center', // Center text horizontally
+                  transition: 'background-color 0.3s', // Smooth transition for background color change
+                }}
               >
                 {/* Your content here instead of the Button */}
-                <FormattedMessage id="formattedMessage" defaultMessage="Convert html to layers" />
+                <FormattedMessage
+                  id="formattedMessage"
+                  defaultMessage="Convert html to layers"
+                />
               </div>
             </div>
           </TabPanel>
@@ -1161,5 +1210,5 @@ ReactDOM.render(
       <App />
     </>
   </MuiThemeProvider>,
-  document.getElementById('react-page'),
+  document.getElementById('react-page')
 );

@@ -12,6 +12,6 @@ a {
   color: rgba(26, 115, 231, 1);
 }
 
-[role="tooltip"] a {
+[role='tooltip'] a {
   color: rgb(7, 178, 215);
 }

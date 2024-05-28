@@ -1,21 +1,21 @@
 interface ExtendedWindow extends Window {
-    HTMLInputElement: HTMLInputElement
+  HTMLInputElement: HTMLInputElement;
 }
 interface FigmaToHtmlContext {
-    window: ExtendedWindow;
-    document: Document
+  window: ExtendedWindow;
+  document: Document;
 }
 
 export const context: FigmaToHtmlContext = {
-    // @ts-expect-error
-    window,
-    document
+  // @ts-expect-error
+  window,
+  document,
 };
 
 export const setContext = (window: Window) => {
-    context.document = window.document;
-    // @ts-expect-error
-    context.window = window;
+  context.document = window.document;
+  // @ts-expect-error
+  context.window = window;
 };
 
 export function parseGradient(cssGradient: string) {
@@ -51,7 +51,7 @@ export function parseGradient(cssGradient: string) {
     } else {
       // Handle radial gradient direction
       const radialDirectionMatch = part.match(
-        /circle( at (center|top|bottom|right|left)( (top|bottom|right|left))?)?/,
+        /circle( at (center|top|bottom|right|left)( (top|bottom|right|left))?)?/
       );
       console.warn({ radialDirectionMatch });
       if (radialDirectionMatch) {
@@ -75,13 +75,7 @@ export function parseGradient(cssGradient: string) {
     const parsedColor = getRgb(color); // Debugging line
     return {
       color: parsedColor,
-      position: getPosition(
-        position,
-        index,
-        array.length,
-        isLinear,
-        color,
-      ),
+      position: getPosition(position, index, array.length, isLinear, color),
     };
   });
 
@@ -94,13 +88,15 @@ export function parseGradient(cssGradient: string) {
 }
 
 export const replaceSvgFill = (svg: string, fillColor: string) => {
-    const endTagIndex = svg.indexOf('>');
-    const mainTag = svg.slice(1, endTagIndex);
-    const fillAttr = `fill="${fillColor}"`;
-    const mainTagWithFill = mainTag.includes('fill=') ? mainTag.replace(/fill\=(.*?)\s/, `fill="${fillColor}" `) : mainTag + fillAttr;
+  const endTagIndex = svg.indexOf('>');
+  const mainTag = svg.slice(1, endTagIndex);
+  const fillAttr = `fill="${fillColor}"`;
+  const mainTagWithFill = mainTag.includes('fill=')
+    ? mainTag.replace(/fill\=(.*?)\s/, `fill="${fillColor}" `)
+    : mainTag + fillAttr;
 
-    return `<${mainTagWithFill}>${svg.slice(endTagIndex)}`;
-}
+  return `<${mainTagWithFill}>${svg.slice(endTagIndex)}`;
+};
 
 function splitGradientParts(gradientPart: string): string[] {
   let parts = [];
@@ -165,7 +161,7 @@ export function getRgb(color: string) {
 
   // Check if color is in rgba format
   match = color.match(
-    /^rgba?\((\d+),\s*(\d+),\s*(\d+)(?:,\s*(\d+(?:\.\d+)?))?\)$/i,
+    /^rgba?\((\d+),\s*(\d+),\s*(\d+)(?:,\s*(\d+(?:\.\d+)?))?\)$/i
   );
   if (match) {
     return {
@@ -218,13 +214,12 @@ function getRadialAngleFromDirection(direction: string): number {
   }
 }
 
-
 function getPosition(
   position: string | undefined,
   index: number,
   arrayLength: number,
   isLinear: boolean,
-  direction: string,
+  direction: string
 ): number {
   if (position) {
     return parseFloat(position) / 100;

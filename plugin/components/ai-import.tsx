@@ -1,21 +1,21 @@
-import * as React from "react";
-import { Textarea } from "./textarea";
-import { Button, CircularProgress } from "@material-ui/core";
-import { Input } from "./input";
-import { ClientStorage, apiHost, getImageFills, processImages } from "../ui";
-import { settings } from "../constants/settings";
-import { traverseLayers } from "../functions/traverse-layers";
-import * as amplitude from "../functions/track";
-import { theme } from "../constants/theme";
-import { HelpTooltip } from "./help-tooltip";
-import { TextLink, TooltipTextLink } from "./text-link";
-import { useDev } from "../constants/use-dev";
-import { HelpOutline } from "@material-ui/icons";
+import * as React from 'react';
+import { Textarea } from './textarea';
+import { Button, CircularProgress } from '@material-ui/core';
+import { Input } from './input';
+import { ClientStorage, apiHost, getImageFills, processImages } from '../ui';
+import { settings } from '../constants/settings';
+import { traverseLayers } from '../functions/traverse-layers';
+import * as amplitude from '../functions/track';
+import { theme } from '../constants/theme';
+import { HelpTooltip } from './help-tooltip';
+import { TextLink, TooltipTextLink } from './text-link';
+import { useDev } from '../constants/use-dev';
+import { HelpOutline } from '@material-ui/icons';
 
 export const aiApiHost = useDev
-  ? "http://localhost:4000"
+  ? 'http://localhost:4000'
   : // Need to use raw function URL to support streaming
-    "https://ai-to-figma-tk43uighdq-uc.a.run.app";
+    'https://ai-to-figma-tk43uighdq-uc.a.run.app';
 
 const numPreviews = 4;
 
@@ -28,7 +28,7 @@ const tryJsonParse = (str: string) => {
 };
 
 function defaultPreviews() {
-  return Array.from({ length: numPreviews }, () => "");
+  return Array.from({ length: numPreviews }, () => '');
 }
 
 function countInstancesOf(string: string, char: string) {
@@ -44,7 +44,7 @@ function addImagesToHtml(html: string, index: number, images: string[]) {
 }
 
 const defaultImage =
-  "https://cdn.builder.io/api/v1/image/assets%2FYJIGb4i01jvw0SRdL5Bt%2F72c80f114dc149019051b6852a9e3b7a";
+  'https://cdn.builder.io/api/v1/image/assets%2FYJIGb4i01jvw0SRdL5Bt%2F72c80f114dc149019051b6852a9e3b7a';
 
 function defaultImages() {
   return Array.from({ length: numPreviews }, () => defaultImage);
@@ -57,8 +57,8 @@ export function AiImport(props: {
   const abortControllerRef = React.useRef<AbortController | null>(null);
   const [previews, setPreviews] = React.useState(defaultPreviews());
   const images = React.useRef<string[]>(defaultImages());
-  const [prompt, setPrompt] = React.useState("a homepage hero");
-  const [style, setStyle] = React.useState("everlane.com");
+  const [prompt, setPrompt] = React.useState('a homepage hero');
+  const [style, setStyle] = React.useState('everlane.com');
   const [openAiKey, setOpenAiKey] = React.useState(
     props.clientStorage?.openAiKey
   );
@@ -76,12 +76,12 @@ export function AiImport(props: {
       const { data: rawData, source } = e as MessageEvent;
       const data = rawData.pluginMessage;
 
-      if (data.type === "doneLoading") {
+      if (data.type === 'doneLoading') {
         setLoading(false);
       }
     }
-    window.addEventListener("message", handler);
-    return () => window.removeEventListener("message", handler);
+    window.addEventListener('message', handler);
+    return () => window.removeEventListener('message', handler);
   }, []);
 
   function hasPreviews() {
@@ -93,23 +93,23 @@ export function AiImport(props: {
       parent.postMessage(
         {
           pluginMessage: {
-            type: "resize",
+            type: 'resize',
             width: 1025,
             height: settings.ui.baseHeight,
           },
         },
-        "*"
+        '*'
       );
     } else {
       parent.postMessage(
         {
           pluginMessage: {
-            type: "resize",
+            type: 'resize',
             width: settings.ui.baseWidth,
             height: settings.ui.baseHeight,
           },
         },
-        "*"
+        '*'
       );
     }
 
@@ -117,12 +117,12 @@ export function AiImport(props: {
       parent.postMessage(
         {
           pluginMessage: {
-            type: "resize",
+            type: 'resize',
             width: settings.ui.baseWidth,
             height: settings.ui.baseHeight,
           },
         },
-        "*"
+        '*'
       );
     };
   }, [hasPreviews()]);
@@ -132,15 +132,15 @@ export function AiImport(props: {
     const response = await fetch(
       `${aiApiHost}/api/v1/ai-to-figma/generate-image`,
       {
-        method: "POST",
+        method: 'POST',
         signal: abortControllerRef.current?.signal,
         headers: {
-          "Content-Type": "application/json",
+          'Content-Type': 'application/json',
         },
         body: JSON.stringify({
           prompt: `A lifestyle image like would be on ${style}'s homepage. It should look like a photo taken by a photographer.`,
           key: openAiKey,
-          size: "256x256",
+          size: '256x256',
           number: numPreviews,
         }),
       }
@@ -158,7 +158,7 @@ export function AiImport(props: {
   async function onSubmit(e: React.FormEvent | React.KeyboardEvent) {
     e.preventDefault();
     setError(null);
-    setLoading("Generating...");
+    setLoading('Generating...');
 
     if (abortControllerRef.current) {
       abortControllerRef.current.abort();
@@ -170,10 +170,10 @@ export function AiImport(props: {
 
     try {
       const response = await fetch(`${aiApiHost}/api/v1/ai-to-figma/preview`, {
-        method: "POST",
+        method: 'POST',
         signal: abortControllerRef.current.signal,
         headers: {
-          "Content-Type": "application/json",
+          'Content-Type': 'application/json',
         },
         body: JSON.stringify({
           style: style,
@@ -184,28 +184,28 @@ export function AiImport(props: {
       });
 
       const reader = response.body!.getReader();
-      const decoder = new TextDecoder("utf-8");
+      const decoder = new TextDecoder('utf-8');
 
-      const html = ["", "", "", ""];
+      const html = ['', '', '', ''];
 
-      let fullResponseText = "";
+      let fullResponseText = '';
       while (true) {
         const { value, done } = await reader.read();
         if (done) {
           break;
         }
-        const textArr = decoder.decode(value, { stream: true }).split("\n");
+        const textArr = decoder.decode(value, { stream: true }).split('\n');
 
         for (const text of textArr) {
           fullResponseText += text;
-          if (text.startsWith("data:")) {
+          if (text.startsWith('data:')) {
             try {
-              const { index, content } = JSON.parse(text.replace("data:", ""));
+              const { index, content } = JSON.parse(text.replace('data:', ''));
 
               html[index] += content;
               const item = html[index];
               // Make sure we don't stream in partial tags like `<div ...` before we close it
-              if (countInstancesOf(item, "<") === countInstancesOf(item, ">")) {
+              if (countInstancesOf(item, '<') === countInstancesOf(item, '>')) {
                 previews[index] = addImagesToHtml(item, index, images.current);
 
                 setPreviews([...previews]);
@@ -225,7 +225,7 @@ export function AiImport(props: {
         setError(fullResponseText);
       }
     } catch (err) {
-      console.error("Error fetching previews: ", err);
+      console.error('Error fetching previews: ', err);
       setError(
         `
         We had an issue generating results. Please make sure you have a working internet connection and try again, and if this issue persists please let us know at https://github.com/BuilderIO/figma-html/issues
@@ -237,20 +237,20 @@ export function AiImport(props: {
   }
 
   return (
-    <div style={{ display: "flex" }}>
+    <div style={{ display: 'flex' }}>
       <div
         style={{
           width: settings.ui.baseWidth,
           flexShrink: 0,
-          display: "flex",
-          flexDirection: "column",
-          boxSizing: "border-box",
-          padding: "7 20",
+          display: 'flex',
+          flexDirection: 'column',
+          boxSizing: 'border-box',
+          padding: '7 20',
         }}
       >
         <form onSubmit={onSubmit}>
           <h4>
-            Prompt{" "}
+            Prompt{' '}
             <HelpTooltip>
               <>Be as detailed and specific as possible.</>
             </HelpTooltip>
@@ -258,7 +258,7 @@ export function AiImport(props: {
           <Textarea
             onKeyPress={(e) => {
               if (
-                e.key === "Enter" &&
+                e.key === 'Enter' &&
                 !(e.shiftKey || e.ctrlKey || e.altKey || e.metaKey)
               ) {
                 onSubmit(e);
@@ -288,22 +288,22 @@ export function AiImport(props: {
             OpenAI Key
             <HelpTooltip interactive>
               <>
-                Please{" "}
+                Please{' '}
                 <TooltipTextLink href="https://platform.openai.com/signup">
                   create an account
-                </TooltipTextLink>{" "}
-                with{" "}
+                </TooltipTextLink>{' '}
+                with{' '}
                 <TooltipTextLink href="https://platform.openai.com/overview">
                   OpenAI
-                </TooltipTextLink>{" "}
-                and provide then grab your{" "}
+                </TooltipTextLink>{' '}
+                and provide then grab your{' '}
                 <TooltipTextLink href="https://platform.openai.com/account/api-keys">
                   API key
-                </TooltipTextLink>{" "}
-                and put it here. Be sure that you have{" "}
+                </TooltipTextLink>{' '}
+                and put it here. Be sure that you have{' '}
                 <TooltipTextLink href="https://platform.openai.com/account/billing/overview">
                   billing
-                </TooltipTextLink>{" "}
+                </TooltipTextLink>{' '}
                 <TooltipTextLink href="https://help.openai.com/en/articles/6891831-error-code-429-you-exceeded-your-current-quota-please-check-your-plan-and-billing-details">
                   turned on
                 </TooltipTextLink>
@@ -334,12 +334,12 @@ export function AiImport(props: {
         {error && (
           <div
             style={{
-              color: "rgba(255, 40, 40, 1)",
+              color: 'rgba(255, 40, 40, 1)',
               marginBottom: 10,
-              backgroundColor: "rgba(255, 0, 0, 0.1)",
+              backgroundColor: 'rgba(255, 0, 0, 0.1)',
               padding: 10,
               borderRadius: 5,
-              whiteSpace: "pre-wrap",
+              whiteSpace: 'pre-wrap',
             }}
           >
             {error}
@@ -348,14 +348,14 @@ export function AiImport(props: {
         {loading && (
           <div
             style={{
-              display: "flex",
-              justifyContent: "center",
-              flexDirection: "column",
+              display: 'flex',
+              justifyContent: 'center',
+              flexDirection: 'column',
             }}
           >
-            <CircularProgress style={{ margin: "10 auto" }} disableShrink />
-            {typeof loading === "string" && (
-              <div style={{ margin: "10 auto" }}>{loading}</div>
+            <CircularProgress style={{ margin: '10 auto' }} disableShrink />
+            {typeof loading === 'string' && (
+              <div style={{ margin: '10 auto' }}>{loading}</div>
             )}
           </div>
         )}
@@ -365,14 +365,14 @@ export function AiImport(props: {
           style={{
             color: theme.colors.primary,
             border: `1px solid ${theme.colors.primaryWithOpacity(0.2)}`,
-            fontWeight: "bold",
+            fontWeight: 'bold',
             padding: 10,
             borderRadius: 5,
             backgroundColor: theme.colors.primaryWithOpacity(0.1),
-            display: "flex",
-            alignItems: "center",
-            cursor: "pointer",
-            textDecoration: "none",
+            display: 'flex',
+            alignItems: 'center',
+            cursor: 'pointer',
+            textDecoration: 'none',
           }}
         >
           <HelpOutline style={{ marginRight: 10 }} />
@@ -382,21 +382,21 @@ export function AiImport(props: {
       {hasPreviews() && (
         <div
           style={{
-            backgroundColor: "#f9f9f9",
-            display: "flex",
-            flexWrap: "wrap",
-            justifyContent: "center",
+            backgroundColor: '#f9f9f9',
+            display: 'flex',
+            flexWrap: 'wrap',
+            justifyContent: 'center',
             gap: 10,
             padding: 20,
             height: 670,
             marginLeft: -1,
-            borderLeft: "1px solid #ccc",
-            position: "fixed",
+            borderLeft: '1px solid #ccc',
+            position: 'fixed',
             right: 0,
             zIndex: 5,
             top: 0,
             width: `calc(100% - ${settings.ui.baseWidth - 1}px)`,
-            overflow: "auto",
+            overflow: 'auto',
           }}
         >
           {previews.map((preview, index) => (
@@ -404,26 +404,26 @@ export function AiImport(props: {
               role="button"
               key={index}
               style={{
-                width: "300px",
-                height: "300px",
-                background: "white",
-                position: "relative",
-                borderRadius: "4px",
-                overflow: "hidden",
-                cursor: "pointer",
-                border: "1px solid #ccc",
+                width: '300px',
+                height: '300px',
+                background: 'white',
+                position: 'relative',
+                borderRadius: '4px',
+                overflow: 'hidden',
+                cursor: 'pointer',
+                border: '1px solid #ccc',
               }}
               onClick={async () => {
-                setLoading("Importing...");
+                setLoading('Importing...');
                 setPreviews(defaultPreviews());
                 abortControllerRef.current?.abort();
                 abortControllerRef.current = new AbortController();
 
                 fetch(`${apiHost}/api/v1/url-to-figma?width=1200`, {
-                  method: "POST",
+                  method: 'POST',
                   signal: abortControllerRef.current.signal,
                   headers: {
-                    "Content-Type": "application/json",
+                    'Content-Type': 'application/json',
                   },
                   body: JSON.stringify({
                     html: `<div style="font-family:Arial,Helvetica,sans-serif;">${preview}</div>`,
@@ -431,13 +431,13 @@ export function AiImport(props: {
                 })
                   .then((res) => {
                     if (!res.ok) {
-                      console.error("Url-to-figma failed", res);
-                      amplitude.track("import for ai error");
-                      throw new Error("Url-to-figma failed");
+                      console.error('Url-to-figma failed', res);
+                      amplitude.track('import for ai error');
+                      throw new Error('Url-to-figma failed');
                     }
-                    amplitude.incrementUserProps("import_count");
-                    amplitude.track("import to figma for ai", {
-                      type: "url",
+                    amplitude.incrementUserProps('import_count');
+                    amplitude.track('import to figma for ai', {
+                      type: 'url',
                     });
                     return res.json();
                   })
@@ -451,7 +451,7 @@ export function AiImport(props: {
                             (layer: any) => {
                               if (getImageFills(layer)) {
                                 return processImages(layer).catch((err) => {
-                                  console.warn("Could not process image", err);
+                                  console.warn('Could not process image', err);
                                 });
                               }
                             }
@@ -464,12 +464,12 @@ export function AiImport(props: {
                     parent.postMessage(
                       {
                         pluginMessage: {
-                          type: "import",
+                          type: 'import',
                           data: data[0],
                           blurImages: true,
                         },
                       },
-                      "*"
+                      '*'
                     );
                   })
                   .catch((err) => {
@@ -481,19 +481,19 @@ export function AiImport(props: {
             >
               <div
                 style={{
-                  width: "300%",
-                  height: "300%",
-                  transform: "scale(0.3333)",
-                  position: "absolute",
-                  top: "0",
-                  left: "0",
-                  transformOrigin: "top left",
-                  overflow: "auto",
+                  width: '300%',
+                  height: '300%',
+                  transform: 'scale(0.3333)',
+                  position: 'absolute',
+                  top: '0',
+                  left: '0',
+                  transformOrigin: 'top left',
+                  overflow: 'auto',
                 }}
               >
                 <div
                   style={{
-                    pointerEvents: "none",
+                    pointerEvents: 'none',
                   }}
                   dangerouslySetInnerHTML={{ __html: preview }}
                 ></div>

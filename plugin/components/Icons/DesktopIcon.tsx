@@ -1,6 +1,6 @@
-import { SvgIcon } from "@material-ui/core";
-import { SvgIconProps } from "@material-ui/core/SvgIcon";
-import * as React from "react";
+import { SvgIcon } from '@material-ui/core';
+import { SvgIconProps } from '@material-ui/core/SvgIcon';
+import * as React from 'react';
 
 export const DesktopIcon = (props: SvgIconProps) => (
   <SvgIcon style={{ width: 16 }} viewBox="0 0 18 16">

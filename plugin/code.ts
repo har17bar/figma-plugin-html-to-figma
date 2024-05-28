@@ -143,9 +143,9 @@ async function postSelection() {
           serialize(el as any, {
             // TODO: only need one level deep......
             withChildren: true,
-          }),
-        ),
-      ),
+          })
+        )
+      )
     ),
   });
 }
@@ -169,17 +169,20 @@ async function processImages(layer: RectangleNode | TextNode) {
           image.imageHash = await figma.createImage(image.intArr).hash;
           delete image.intArr;
         }
-      }),
+      })
     )
   );
 }
 
 function getImageFills(layer: RectangleNode | TextNode) {
-  const images = Array.isArray(layer.fills) && layer.fills.filter((item) => item.type === 'IMAGE');
+  const images =
+    Array.isArray(layer.fills) &&
+    layer.fills.filter((item) => item.type === 'IMAGE');
   return images;
 }
 
-const normalizeName = (str: string) => str.toLowerCase().replace(/[^a-z]/gi, '');
+const normalizeName = (str: string) =>
+  str.toLowerCase().replace(/[^a-z]/gi, '');
 
 const defaultFont = { family: 'Roboto', style: 'Regular' };
 
@@ -216,7 +219,7 @@ async function serialize(
     withChildren?: boolean;
     // TODO
     withVectorsExported?: boolean;
-  } = {},
+  } = {}
 ): Promise<any> {
   let fills = (element.fills && (fastClone(element.fills) as Paint[])) || [];
   if (options.withImages && fills.length) {
@@ -235,7 +238,9 @@ async function serialize(
 
   // TODO: May have bg...
   const isSvg =
-    (hasChildren(element) && element.children.every((item) => item.type === 'VECTOR')) || element.type === 'VECTOR';
+    (hasChildren(element) &&
+      element.children.every((item) => item.type === 'VECTOR')) ||
+    element.type === 'VECTOR';
 
   if (
     options.withImages &&
@@ -275,7 +280,7 @@ async function serialize(
         (await Promise.all(
           element.children
             .filter((child: SceneNode) => child.visible)
-            .map((child: any) => serialize(child as any, options)),
+            .map((child: any) => serialize(child as any, options))
         ))) ||
       undefined,
   };
@@ -287,7 +292,8 @@ function assign(a: BaseNode & AnyStringMap, b: AnyStringMap) {
   for (const key in b) {
     const value = b[key];
     if (key === 'data' && value && typeof value === 'object') {
-      const currentData = JSON.parse(a.getSharedPluginData('builder', 'data') || '{}') || {};
+      const currentData =
+        JSON.parse(a.getSharedPluginData('builder', 'data') || '{}') || {};
       const newData = value;
       const mergedData = Object.assign({}, currentData, newData);
       // TODO merge plugin data
@@ -315,17 +321,29 @@ function clearAllErrors() {
   });
 }
 
-const importableLayerTypes = new Set<NodeType>(['RECTANGLE', 'FRAME', 'TEXT', 'COMPONENT', 'LINE', 'INSTANCE']);
+const importableLayerTypes = new Set<NodeType>([
+  'RECTANGLE',
+  'FRAME',
+  'TEXT',
+  'COMPONENT',
+  'LINE',
+  'INSTANCE',
+]);
 
 const isNotImportable = (node: SceneNode) =>
   // Don't show warnings for invisble nodes, we don't import them
   !node.visible
     ? false
-    : ((node as FrameNode | GroupNode).children && getLayout(node) === 'unknown') ||
+    : ((node as FrameNode | GroupNode).children &&
+        getLayout(node) === 'unknown') ||
       !importableLayerTypes.has(node.type);
 
 const getAbsolutePositionRelativeToArtboard = (node: SceneNode) => {
-  if (typeof node.x !== 'number' || !node.parent || ['PAGE', 'DOCUMENT'].includes(node.type)) {
+  if (
+    typeof node.x !== 'number' ||
+    !node.parent ||
+    ['PAGE', 'DOCUMENT'].includes(node.type)
+  ) {
     return { x: 0, y: 0 };
   }
   const position = {
@@ -352,7 +370,10 @@ const getAbsolutePositionRelativeToArtboard = (node: SceneNode) => {
   return position;
 };
 
-const getAbsolutePositionRelativeToRootLayer = (node: SceneNode, rootPosition: { x: number; y: number }) => {
+const getAbsolutePositionRelativeToRootLayer = (
+  node: SceneNode,
+  rootPosition: { x: number; y: number }
+) => {
   const nodeAbsolutePosition = getAbsolutePositionRelativeToArtboard(node);
   return {
     x: nodeAbsolutePosition.x - rootPosition.x,
@@ -405,7 +426,10 @@ async function checkIfCanGetCode() {
       } else {
         errorLayer.name = `"${invalidLayer.name}" needs to use autolayout`;
       }
-      const { x, y } = getAbsolutePositionRelativeToRootLayer(invalidLayer, absolutePosition);
+      const { x, y } = getAbsolutePositionRelativeToRootLayer(
+        invalidLayer,
+        absolutePosition
+      );
       errorLayer.x = x;
       errorLayer.y = y;
       errorLayer.fills = [];
@@ -471,8 +495,8 @@ figma.ui.onmessage = async (msg) => {
           serialize(el as any, {
             withChildren: true,
             withImages: true,
-          }),
-        ),
+          })
+        )
       ),
     });
   }
@@ -491,7 +515,9 @@ figma.ui.onmessage = async (msg) => {
   }
 
   if (msg.type === 'import') {
-    const availableFonts = (await figma.listAvailableFontsAsync()).filter((font) => font.fontName.style === 'Regular');
+    const availableFonts = (await figma.listAvailableFontsAsync()).filter(
+      (font) => font.fontName.style === 'Regular'
+    );
     await figma.loadFontAsync(defaultFont);
     const { data } = msg;
     const { layers } = data;
@@ -554,7 +580,10 @@ figma.ui.onmessage = async (msg) => {
               if (cached) {
                 text.fontName = cached;
               } else {
-                const family = await getMatchingFont(layer.fontFamily || '', availableFonts);
+                const family = await getMatchingFont(
+                  layer.fontFamily || '',
+                  availableFonts
+                );
                 text.fontName = family;
               }
               delete layer.fontFamily;
@@ -563,12 +592,14 @@ figma.ui.onmessage = async (msg) => {
             layer.ref = text;
             text.resize(layer.width || 1, layer.height || 1);
             text.textAutoResize = 'HEIGHT';
-            const lineHeight = (layer.lineHeight && layer.lineHeight.value) || layer.height;
+            const lineHeight =
+              (layer.lineHeight && layer.lineHeight.value) || layer.height;
             let adjustments = 0;
             while (
               typeof text.fontSize === 'number' &&
               typeof layer.fontSize === 'number' &&
-              (text.height > Math.max(layer.height, lineHeight) * 1.2 || text.width > layer.width * 1.2)
+              (text.height > Math.max(layer.height, lineHeight) * 1.2 ||
+                text.width > layer.width * 1.2)
             ) {
               // Don't allow changing more than ~30%
               if (adjustments++ > layer.fontSize * 0.3) {

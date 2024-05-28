@@ -1,8 +1,8 @@
 // Credit: https://gist.github.com/jonleighton/958841
 export function arrayBufferToBase64(bytes: Uint8Array) {
-  var base64 = "";
+  var base64 = '';
   var encodings =
-    "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
+    'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/';
 
   var byteLength = bytes.byteLength;
   var byteRemainder = byteLength % 3;
@@ -35,7 +35,7 @@ export function arrayBufferToBase64(bytes: Uint8Array) {
     // Set the 4 least significant bits to zero
     b = (chunk & 3) << 4; // 3   = 2^2 - 1
 
-    base64 += encodings[a] + encodings[b] + "==";
+    base64 += encodings[a] + encodings[b] + '==';
   } else if (byteRemainder == 2) {
     chunk = (bytes[mainLength] << 8) | bytes[mainLength + 1];
 
@@ -45,7 +45,7 @@ export function arrayBufferToBase64(bytes: Uint8Array) {
     // Set the 2 least significant bits to zero
     c = (chunk & 15) << 2; // 15    = 2^4 - 1
 
-    base64 += encodings[a] + encodings[b] + encodings[c] + "=";
+    base64 += encodings[a] + encodings[b] + encodings[c] + '=';
   }
 
   return base64;

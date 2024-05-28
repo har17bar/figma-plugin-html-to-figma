@@ -1,28 +1,31 @@
-export type Direction = "left" | "right" | "top" | "bottom";
+export type Direction = 'left' | 'right' | 'top' | 'bottom';
 
 function getDirectionMostOfElements(direction: Direction, elements: Element[]) {
   if (elements.length === 1) {
     return elements[0];
   }
-  return elements.reduce((memo, value) => {
-    if (!memo) {
-      return value;
-    }
-
-    const valueDirection = getBoundingClientRect(value)[direction];
-    const memoDirection = getBoundingClientRect(memo)[direction];
-
-    if (direction === "left" || direction === "top") {
-      if (valueDirection < memoDirection) {
+  return elements.reduce(
+    (memo, value) => {
+      if (!memo) {
         return value;
       }
-    } else {
-      if (valueDirection > memoDirection) {
-        return value;
+
+      const valueDirection = getBoundingClientRect(value)[direction];
+      const memoDirection = getBoundingClientRect(memo)[direction];
+
+      if (direction === 'left' || direction === 'top') {
+        if (valueDirection < memoDirection) {
+          return value;
+        }
+      } else {
+        if (valueDirection > memoDirection) {
+          return value;
+        }
       }
-    }
-    return memo;
-  }, null as Element | null) as Element;
+      return memo;
+    },
+    null as Element | null
+  ) as Element;
 }
 
 function getAggregateRectOfElements(elements: Element[]) {
@@ -31,16 +34,16 @@ function getAggregateRectOfElements(elements: Element[]) {
   }
 
   const { top } = getBoundingClientRect(
-    getDirectionMostOfElements("top", elements)
+    getDirectionMostOfElements('top', elements)
   );
   const { left } = getBoundingClientRect(
-    getDirectionMostOfElements("left", elements)
+    getDirectionMostOfElements('left', elements)
   );
   const { bottom } = getBoundingClientRect(
-    getDirectionMostOfElements("bottom", elements)
+    getDirectionMostOfElements('bottom', elements)
   );
   const { right } = getBoundingClientRect(
-    getDirectionMostOfElements("right", elements)
+    getDirectionMostOfElements('right', elements)
   );
   const width = right - left;
   const height = bottom - top;
@@ -57,13 +60,13 @@ function getAggregateRectOfElements(elements: Element[]) {
 export interface Dimensions
   extends Pick<
     DOMRect,
-    "top" | "left" | "bottom" | "width" | "right" | "height"
+    'top' | 'left' | 'bottom' | 'width' | 'right' | 'height'
   > {}
 
 export function getBoundingClientRect(el: Element): Dimensions {
   const computed = getComputedStyle(el);
   const display = computed.display;
-  if (display.includes("inline") && el.children.length) {
+  if (display.includes('inline') && el.children.length) {
     const elRect = el.getBoundingClientRect();
     const aggregateRect = getAggregateRectOfElements(Array.from(el.children))!;
 

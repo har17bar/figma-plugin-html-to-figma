@@ -1,5 +1,5 @@
-import * as React from "react";
-import { reaction, IReactionOptions, action } from "mobx";
+import * as React from 'react';
+import { reaction, IReactionOptions, action } from 'mobx';
 
 type VoidFunction = () => void;
 
@@ -10,7 +10,7 @@ type VoidFunction = () => void;
  */
 export class SafeComponent<
   P extends object = {},
-  S = any
+  S = any,
 > extends React.Component<P, S> {
   private _unMounted = false;
 

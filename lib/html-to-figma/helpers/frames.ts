@@ -1,7 +1,7 @@
-import { LayerNode, WithRef } from "../types/nodes";
-import { getBoundingClientRect } from "./dimensions";
-import { hasChildren, getDepth, getParents, traverse } from "./nodes";
-import { addConstraints } from "./styles";
+import { LayerNode, WithRef } from '../types/nodes';
+import { getBoundingClientRect } from './dimensions';
+import { hasChildren, getDepth, getParents, traverse } from './nodes';
+import { addConstraints } from './styles';
 
 const getParent = ({
   layer,
@@ -20,11 +20,11 @@ const getParent = ({
       ) {
         response = child;
         // Deep traverse short circuit hack
-        throw "DONE";
+        throw 'DONE';
       }
     });
   } catch (err) {
-    if (err === "DONE") {
+    if (err === 'DONE') {
       // Do nothing
     } else {
       console.error(err instanceof Error ? err.message : err);
@@ -52,7 +52,7 @@ const makeTree = ({
   while (updated) {
     updated = false;
     if (iterations++ > 10000) {
-      console.error("Too many tree iterations 1");
+      console.error('Too many tree iterations 1');
       break;
     }
 
@@ -91,9 +91,9 @@ const makeTree = ({
               }
               const overflowHidden =
                 parentRef instanceof Element &&
-                getComputedStyle(parentRef).overflow !== "visible";
+                getComputedStyle(parentRef).overflow !== 'visible';
               const newParent: LayerNode = {
-                type: "FRAME",
+                type: 'FRAME',
                 clipsContent: !!overflowHidden,
                 // type: 'GROUP',
                 x: parentLayer.x,
@@ -108,7 +108,7 @@ const makeTree = ({
               const parent = getParent({ layer: parentLayer, root });
               if (!parent) {
                 console.warn(
-                  "\n\nCANT FIND PARENT\n",
+                  '\n\nCANT FIND PARENT\n',
                   JSON.stringify({ ...parentLayer, ref: null })
                 );
                 continue;
@@ -134,7 +134,7 @@ const makeTree = ({
   let secondIterations = 0;
   while (secondUpdate) {
     if (secondIterations++ > 10000) {
-      console.error("Too many tree iterations 2");
+      console.error('Too many tree iterations 2');
       break;
     }
     secondUpdate = false;
@@ -143,7 +143,7 @@ const makeTree = ({
       if (secondUpdate) {
         return;
       }
-      if (layer.type === "FRAME") {
+      if (layer.type === 'FRAME') {
         // Final all child elements with layers, and add groups around  any with a shared parent not shared by another
         const ref = layer.ref as Element;
         if (layer.children && layer.children.length > 2) {
@@ -193,10 +193,10 @@ const makeTree = ({
               const overflowHidden =
                 lowestCommonDenominator instanceof Element &&
                 getComputedStyle(lowestCommonDenominator).overflow !==
-                  "visible";
+                  'visible';
 
               const newParent: LayerNode = {
-                type: "FRAME",
+                type: 'FRAME',
                 clipsContent: !!overflowHidden,
                 ref: lowestCommonDenominator as Element,
                 x: lcdRect.left,
@@ -230,7 +230,7 @@ const makeTree = ({
   }
   // Update all positions
   traverse(root, (layer) => {
-    if (layer.type === "FRAME" || (layer as any).type === "GROUP") {
+    if (layer.type === 'FRAME' || (layer as any).type === 'GROUP') {
       const { x, y } = layer;
       if (x || y) {
         traverse(layer, (child) => {

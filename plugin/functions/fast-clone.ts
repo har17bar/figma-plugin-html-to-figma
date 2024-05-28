@@ -1,5 +1,5 @@
 export const fastClone = <T extends any>(obj: T): T =>
-  typeof obj === "symbol" ? null : JSON.parse(JSON.stringify(obj));
+  typeof obj === 'symbol' ? null : JSON.parse(JSON.stringify(obj));
 
 export function deepClone(obj: any, hash = new WeakMap()) {
   if (Object(obj) !== obj || obj instanceof Function || obj instanceof RegExp) {

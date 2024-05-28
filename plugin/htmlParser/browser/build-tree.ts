@@ -1,48 +1,46 @@
-import { getBoundingClientRect } from './dom-utils';
-import { hasChildren, traverse } from '../utils';
+import {  traverse } from '../utils';
 import { LayerNode, WithRef } from '../types';
-import { context } from './utils';
 
 function getParent(layer: LayerNode, root: WithRef<FrameNode>) {
-    let response: LayerNode | null = null;
-    try {
-        traverse(root, (child) => {
-            if (
-                child &&
-                (child as any).children &&
-                (child as any).children.includes(layer)
-            ) {
-                response = child;
-                // Deep traverse short circuit hack
-                throw 'DONE';
-            }
-        });
-    } catch (err) {
-        if (err === 'DONE') {
-            // Do nothing
-        } else {
-            // console.error(err.message);
-        }
+  let response: LayerNode | null = null;
+  try {
+    traverse(root, (child) => {
+      if (
+        child &&
+        (child as any).children &&
+        (child as any).children.includes(layer)
+      ) {
+        response = child;
+        // Deep traverse short circuit hack
+        throw 'DONE';
+      }
+    });
+  } catch (err) {
+    if (err === 'DONE') {
+      // Do nothing
+    } else {
+      // console.error(err.message);
     }
-    return response;
+  }
+  return response;
 }
 
 function getParents(node: Element | Node): Element[] {
-    let el: Element | null =
-        node instanceof Node && node.nodeType === Node.TEXT_NODE
-            ? node.parentElement
-            : (node as Element);
+  let el: Element | null =
+    node instanceof Node && node.nodeType === Node.TEXT_NODE
+      ? node.parentElement
+      : (node as Element);
 
-    let parents: Element[] = [];
-    while (el && (el = el.parentElement)) {
-        parents.push(el);
-    }
-    return parents;
+  let parents: Element[] = [];
+  while (el && (el = el.parentElement)) {
+    parents.push(el);
+  }
+  return parents;
 }
 
-function getDepth(node: Element | Node) {
-    return getParents(node).length;
-}
+// function getDepth(node: Element | Node) {
+//   return getParents(node).length;
+// }
 
 // export function removeRefs(layers: LayerNode[], root: WithRef<FrameNode>) {
 //     layers.concat([root]).forEach((layer) => {

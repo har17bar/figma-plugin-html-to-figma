@@ -1,4 +1,4 @@
-import { hasChildren } from "../../lib/helpers";
+import { hasChildren } from '../../lib/helpers';
 
 export async function traverseLayers(
   layer: SceneNode,

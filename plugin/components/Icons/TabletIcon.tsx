@@ -1,6 +1,6 @@
-import { SvgIcon } from "@material-ui/core";
-import { SvgIconProps } from "@material-ui/core/SvgIcon";
-import * as React from "react";
+import { SvgIcon } from '@material-ui/core';
+import { SvgIconProps } from '@material-ui/core/SvgIcon';
+import * as React from 'react';
 
 export const TabletIcon = (props: SvgIconProps) => (
   <SvgIcon style={{ width: 12 }} viewBox="0 0 15 16">

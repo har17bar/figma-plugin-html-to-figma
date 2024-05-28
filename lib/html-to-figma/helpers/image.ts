@@ -11,20 +11,20 @@ export const getImagePaintWithUrl = ({
 }): ImagePaintWithUrl | undefined => {
   if (el instanceof SVGSVGElement) {
     const url = `data:image/svg+xml,${encodeURIComponent(
-      el.outerHTML.replace(/\s+/g, " ")
+      el.outerHTML.replace(/\s+/g, ' ')
     )}`;
     return {
       url,
-      type: "IMAGE",
+      type: 'IMAGE',
       // TODO: object fit, position
-      scaleMode: "FILL",
+      scaleMode: 'FILL',
       imageHash: null,
     };
   } else {
     const baseImagePaint: ImagePaint = {
-      type: "IMAGE",
+      type: 'IMAGE',
       // TODO: object fit, position
-      scaleMode: computedStyle.objectFit === "contain" ? "FIT" : "FILL",
+      scaleMode: computedStyle.objectFit === 'contain' ? 'FIT' : 'FILL',
       imageHash: null,
     };
 
@@ -55,7 +55,7 @@ export const getImagePaintWithUrl = ({
   // TO-DO: what happens if this is in the fills array, along with something else e.g. an img?
   if (
     computedStyle.backgroundImage &&
-    computedStyle.backgroundImage !== "none"
+    computedStyle.backgroundImage !== 'none'
   ) {
     const urlMatch = computedStyle.backgroundImage.match(
       /url\(['"]?(.*?)['"]?\)/
@@ -64,9 +64,9 @@ export const getImagePaintWithUrl = ({
     if (url) {
       return {
         url,
-        type: "IMAGE",
+        type: 'IMAGE',
         // TODO: background size, position
-        scaleMode: computedStyle.backgroundSize === "contain" ? "FIT" : "FILL",
+        scaleMode: computedStyle.backgroundSize === 'contain' ? 'FIT' : 'FILL',
         imageHash: null,
       };
     }

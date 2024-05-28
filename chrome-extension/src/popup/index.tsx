@@ -2,12 +2,12 @@ import {
   createMuiTheme,
   CssBaseline,
   MuiThemeProvider,
-} from "@material-ui/core";
-import green from "@material-ui/core/colors/green";
-import * as React from "react";
-import * as ReactDOM from "react-dom";
-import { theme as themeVars } from "../constants/theme";
-import Popup from "./Popup";
+} from '@material-ui/core';
+import green from '@material-ui/core/colors/green';
+import * as React from 'react';
+import * as ReactDOM from 'react-dom';
+import { theme as themeVars } from '../constants/theme';
+import Popup from './Popup';
 
 const theme = createMuiTheme({
   typography: themeVars.typography,
@@ -31,6 +31,6 @@ chrome.tabs.query({ active: true, currentWindow: true }, (tab) => {
         <Popup />
       </>
     </MuiThemeProvider>,
-    document.getElementById("popup")
+    document.getElementById('popup')
   );
 });

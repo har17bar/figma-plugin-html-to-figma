@@ -1,14 +1,14 @@
-import { WithRef } from "../types/nodes";
-import { isHidden } from "./nodes";
-import { fastClone } from "./object";
-import { parseUnits, getRgb } from "./parsers";
+import { WithRef } from '../types/nodes';
+import { isHidden } from './nodes';
+import { fastClone } from './object';
+import { parseUnits, getRgb } from './parsers';
 
 export const buildTextNode = ({
   node,
 }: {
   node: Node;
 }): WithRef<TextNode> | undefined => {
-  const trimmedText = node.textContent?.trim() || "";
+  const trimmedText = node.textContent?.trim() || '';
 
   if (!trimmedText.length) {
     return undefined;
@@ -40,8 +40,8 @@ export const buildTextNode = ({
       y: Math.round(rect.top),
       width: Math.round(rect.width),
       height: Math.round(rect.height),
-      type: "TEXT",
-      characters: trimmedText.replace(/\s+/g, " "),
+      type: 'TEXT',
+      characters: trimmedText.replace(/\s+/g, ' '),
     };
 
     const fills: SolidPaint[] = [];
@@ -49,7 +49,7 @@ export const buildTextNode = ({
 
     if (rgb) {
       fills.push({
-        type: "SOLID",
+        type: 'SOLID',
         color: {
           r: rgb.r,
           g: rgb.g,
@@ -73,16 +73,16 @@ export const buildTextNode = ({
 
     const { textTransform } = computedStyles;
     switch (textTransform) {
-      case "uppercase": {
-        textNode.textCase = "UPPER";
+      case 'uppercase': {
+        textNode.textCase = 'UPPER';
         break;
       }
-      case "lowercase": {
-        textNode.textCase = "LOWER";
+      case 'lowercase': {
+        textNode.textCase = 'LOWER';
         break;
       }
-      case "capitalize": {
-        textNode.textCase = "TITLE";
+      case 'capitalize': {
+        textNode.textCase = 'TITLE';
         break;
       }
     }
@@ -97,14 +97,14 @@ export const buildTextNode = ({
     }
 
     if (
-      ["underline", "strikethrough"].includes(computedStyles.textDecoration)
+      ['underline', 'strikethrough'].includes(computedStyles.textDecoration)
     ) {
       textNode.textDecoration =
         computedStyles.textDecoration.toUpperCase() as any;
     }
 
     if (
-      ["left", "center", "right", "justified"].includes(
+      ['left', 'center', 'right', 'justified'].includes(
         computedStyles.textAlign
       )
     ) {

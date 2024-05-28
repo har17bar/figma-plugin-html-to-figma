@@ -1,5 +1,5 @@
-import * as React from "react";
-import SvgIcon, { SvgIconProps } from "@material-ui/core/SvgIcon";
+import * as React from 'react';
+import SvgIcon, { SvgIconProps } from '@material-ui/core/SvgIcon';
 
 export const Wand = (props: SvgIconProps) => (
   <SvgIcon {...props}>

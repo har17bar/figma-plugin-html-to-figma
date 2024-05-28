@@ -1,7 +1,7 @@
-import * as amplitude from "@amplitude/analytics-browser";
+import * as amplitude from '@amplitude/analytics-browser';
 
 export const initialize = () =>
-  amplitude.init("cef436f480b80001e09b06b6da3d3db5");
+  amplitude.init('cef436f480b80001e09b06b6da3d3db5');
 
 export const track = (eventInput: string, eventProperties = {} as any) =>
   amplitude.track(eventInput, eventProperties);

@@ -1,28 +1,28 @@
-import { getBoundingClientRect } from "./helpers/dimensions";
-import { getImagePaintWithUrl } from "./helpers/image";
-import { isHidden, textNodesUnder, traverse } from "./helpers/nodes";
-import { size } from "./helpers/object";
-import { getRgb } from "./helpers/parsers";
+import { getBoundingClientRect } from './helpers/dimensions';
+import { getImagePaintWithUrl } from './helpers/image';
+import { isHidden, textNodesUnder, traverse } from './helpers/nodes';
+import { size } from './helpers/object';
+import { getRgb } from './helpers/parsers';
 import {
   addStrokesFromBorder,
   getStrokesRectangle,
   getAppliedComputedStyles,
   getShadowEffects,
   getBorderRadii,
-} from "./helpers/styles";
-import { createSvgLayer, processSvgUseElements } from "./helpers/svg";
-import { buildTextNode } from "./helpers/text";
-import { getLayersForFrames } from "./helpers/frames";
-import { LayerNode, WithRef } from "./types/nodes";
+} from './helpers/styles';
+import { createSvgLayer, processSvgUseElements } from './helpers/svg';
+import { buildTextNode } from './helpers/text';
+import { getLayersForFrames } from './helpers/frames';
+import { LayerNode, WithRef } from './types/nodes';
 
 const generateElements = (el: Element) => {
   const getShadowEls = (el: Element): Element[] =>
-    Array.from(el.shadowRoot?.querySelectorAll("*") || []).reduce(
+    Array.from(el.shadowRoot?.querySelectorAll('*') || []).reduce(
       (memo, el) => [...memo, el, ...getShadowEls(el)],
       [] as Element[]
     );
 
-  const els = Array.from(el.querySelectorAll("*")).reduce(
+  const els = Array.from(el.querySelectorAll('*')).reduce(
     (memo, el) => [...memo, el, ...getShadowEls(el)],
     [] as Element[]
   );
@@ -77,7 +77,7 @@ const getLayersForElement = (el: Element) => {
     (size(appliedStyles) ||
       el instanceof HTMLImageElement ||
       el instanceof HTMLVideoElement) &&
-    computedStyle.display !== "none"
+    computedStyle.display !== 'none'
   ) {
     const rect = getBoundingClientRect(el);
 
@@ -88,7 +88,7 @@ const getLayersForElement = (el: Element) => {
 
       if (color) {
         const solidPaint: SolidPaint = {
-          type: "SOLID",
+          type: 'SOLID',
           color: {
             r: color.r,
             g: color.g,
@@ -100,7 +100,7 @@ const getLayersForElement = (el: Element) => {
       }
 
       const rectNode: WithRef<RectangleNode> = {
-        type: "RECTANGLE",
+        type: 'RECTANGLE',
         ref: el,
         x: Math.round(rect.left),
         y: Math.round(rect.top),
@@ -116,7 +116,7 @@ const getLayersForElement = (el: Element) => {
       }
 
       if (!rectNode.strokes) {
-        for (const dir of ["top", "left", "right", "bottom"] as const) {
+        for (const dir of ['top', 'left', 'right', 'bottom'] as const) {
           const strokesLayer = getStrokesRectangle({
             dir,
             rect,
@@ -133,7 +133,7 @@ const getLayersForElement = (el: Element) => {
 
       if (imagePaint) {
         fills.push(imagePaint);
-        rectNode.name = "IMAGE";
+        rectNode.name = 'IMAGE';
       }
 
       const shadowEffects = getShadowEffects({ computedStyle });
@@ -153,18 +153,18 @@ const getLayersForElement = (el: Element) => {
 };
 
 export function htmlToFigma(
-  selector: HTMLElement | string = "body",
+  selector: HTMLElement | string = 'body',
   useFrames = false,
   time = false
 ) {
   if (time) {
-    console.time("Parse dom");
+    console.time('Parse dom');
   }
   const layers: LayerNode[] = [];
   const el =
     selector instanceof HTMLElement
       ? selector
-      : document.querySelector(selector || "body");
+      : document.querySelector(selector || 'body');
 
   if (el) {
     processSvgUseElements(el);
@@ -188,7 +188,7 @@ export function htmlToFigma(
 
   // TODO: send frame: { children: []}
   const root: WithRef<FrameNode> = {
-    type: "FRAME",
+    type: 'FRAME',
     width: Math.round(window.innerWidth),
     height: Math.round(document.documentElement.scrollHeight),
     x: 0,
@@ -205,8 +205,8 @@ export function htmlToFigma(
   removeRefs({ layers: framesLayers, root });
 
   if (time) {
-    console.info("\n");
-    console.timeEnd("Parse dom");
+    console.info('\n');
+    console.timeEnd('Parse dom');
   }
 
   return framesLayers;

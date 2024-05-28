@@ -4,7 +4,8 @@ import {
   getUrl,
   prepareUrl,
   isElemType,
-  ElemTypes, processImages
+  ElemTypes,
+  processImages,
 } from './dom-utils';
 import { getRgb, parseUnits, parseBoxShadowValues, getOpacity } from '../utils';
 import { MetaLayerNode, SvgNode, WithMeta } from '../types';
@@ -15,7 +16,7 @@ import { addConstraintToLayer } from './add-constraints';
 
 export const elementToFigma = async (
   el: Element,
-  pseudo?: string,
+  pseudo?: string
 ): Promise<MetaLayerNode | undefined> => {
   if (el.nodeType === Node.TEXT_NODE) {
     return textToFigma(el);
@@ -114,10 +115,7 @@ export const elementToFigma = async (
                   r: stop.color.r,
                   g: stop.color.g,
                   b: stop.color.b,
-                  a:
-                    stop.color.a !== undefined
-                      ? stop.color.a
-                      : 1,
+                  a: stop.color.a !== undefined ? stop.color.a : 1,
                 },
                 position: stop.position,
               };
@@ -148,10 +146,7 @@ export const elementToFigma = async (
                   r: stop.color.r,
                   g: stop.color.g,
                   b: stop.color.b,
-                  a:
-                    stop.color.a !== undefined
-                      ? stop.color.a
-                      : 1,
+                  a: stop.color.a !== undefined ? stop.color.a : 1,
                 },
                 position: stop.position,
               };
@@ -182,7 +177,7 @@ export const elementToFigma = async (
     computedStyle.backgroundImage !== 'none'
   ) {
     const urlMatch = computedStyle.backgroundImage.match(
-      /url\(['"]?(.*?)['"]?\)/,
+      /url\(['"]?(.*?)['"]?\)/
     );
     const url = urlMatch && urlMatch[1];
 
@@ -191,8 +186,7 @@ export const elementToFigma = async (
         url: prepareUrl(url),
         type: 'IMAGE',
         // TODO: backround size, position
-        scaleMode:
-          computedStyle.backgroundSize === 'contain' ? 'FIT' : 'FILL',
+        scaleMode: computedStyle.backgroundSize === 'contain' ? 'FIT' : 'FILL',
         imageHash: '',
       } as ImagePaint);
     }
@@ -218,8 +212,7 @@ export const elementToFigma = async (
         url,
         type: 'IMAGE',
         // TODO: object fit, position
-        scaleMode:
-          computedStyle.objectFit === 'contain' ? 'FIT' : 'FILL',
+        scaleMode: computedStyle.objectFit === 'contain' ? 'FIT' : 'FILL',
         imageHash: '',
       } as ImagePaint);
     }
@@ -235,8 +228,7 @@ export const elementToFigma = async (
           url: src,
           type: 'IMAGE',
           // TODO: object fit, position
-          scaleMode:
-            computedStyle.objectFit === 'contain' ? 'FIT' : 'FILL',
+          scaleMode: computedStyle.objectFit === 'contain' ? 'FIT' : 'FILL',
           imageHash: '',
         } as ImagePaint);
       }
@@ -249,8 +241,7 @@ export const elementToFigma = async (
         url,
         type: 'IMAGE',
         // TODO: object fit, position
-        scaleMode:
-          computedStyle.objectFit === 'contain' ? 'FIT' : 'FILL',
+        scaleMode: computedStyle.objectFit === 'contain' ? 'FIT' : 'FILL',
         imageHash: '',
       } as ImagePaint);
     }
@@ -261,8 +252,7 @@ export const elementToFigma = async (
   if (computedStyle.boxShadow && computedStyle.boxShadow !== 'none') {
     const parsed = parseBoxShadowValues(computedStyle.boxShadow);
     const hasShadowSpread =
-      parsed.findIndex(({ spreadRadius }) => Boolean(spreadRadius)) !==
-      -1;
+      parsed.findIndex(({ spreadRadius }) => Boolean(spreadRadius)) !== -1;
     // figma requires clipsContent=true, without spreadRadius wont be applied
     if (hasShadowSpread) {
       rectNode.clipsContent = true;
@@ -283,28 +273,28 @@ export const elementToFigma = async (
 
   const borderTopLeftRadius = parseUnits(
     computedStyle.borderTopLeftRadius,
-    rect.height,
+    rect.height
   );
   if (borderTopLeftRadius) {
     rectNode.topLeftRadius = borderTopLeftRadius.value;
   }
   const borderTopRightRadius = parseUnits(
     computedStyle.borderTopRightRadius,
-    rect.height,
+    rect.height
   );
   if (borderTopRightRadius) {
     rectNode.topRightRadius = borderTopRightRadius.value;
   }
   const borderBottomRightRadius = parseUnits(
     computedStyle.borderBottomRightRadius,
-    rect.height,
+    rect.height
   );
   if (borderBottomRightRadius) {
     rectNode.bottomRightRadius = borderBottomRightRadius.value;
   }
   const borderBottomLeftRadius = parseUnits(
     computedStyle.borderBottomLeftRadius,
-    rect.height,
+    rect.height
   );
   if (borderBottomLeftRadius) {
     rectNode.bottomLeftRadius = borderBottomLeftRadius.value;
@@ -313,10 +303,7 @@ export const elementToFigma = async (
   const result = rectNode;
 
   if (!pseudo && getComputedStyle(el, 'before').content !== 'none') {
-    result.before = (await elementToFigma(
-      el,
-      'before',
-    )) as WithMeta<FrameNode>;
+    result.before = (await elementToFigma(el, 'before')) as WithMeta<FrameNode>;
 
     if (result.before) {
       addConstraintToLayer(result.before, el as HTMLElement, 'before');
@@ -325,10 +312,7 @@ export const elementToFigma = async (
   }
 
   if (!pseudo && getComputedStyle(el, 'after').content !== 'none') {
-    result.after = (await elementToFigma(
-      el,
-      'after',
-    )) as WithMeta<FrameNode>;
+    result.after = (await elementToFigma(el, 'after')) as WithMeta<FrameNode>;
     if (result.after) {
       addConstraintToLayer(result.after, el as HTMLElement, 'after');
       result.after.name = '::after';
@@ -338,7 +322,6 @@ export const elementToFigma = async (
   if (isElemType(el, ElemTypes.Input) || isElemType(el, ElemTypes.Textarea)) {
     result.textValue = textToFigma(el, { fromTextInput: true });
   }
-
 
   return result;
 };

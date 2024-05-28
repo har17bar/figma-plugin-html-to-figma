@@ -3,7 +3,11 @@ import { Dimensions, Direction } from './dimensions';
 import { traverse } from './nodes';
 import { getRgb, parseBoxShadowStr, parseUnits } from './parsers';
 
-function setData(node: LayerNode & { data?: { [index: string]: string } }, key: string, value: string) {
+function setData(
+  node: LayerNode & { data?: { [index: string]: string } },
+  key: string,
+  value: string
+) {
   if (!node.data) {
     node.data = {};
   }
@@ -24,7 +28,10 @@ const list: (keyof React.CSSProperties)[] = [
   'boxShadow',
 ];
 
-export function getAppliedComputedStyles(element: Element, pseudo?: string): { [key: string]: string } {
+export function getAppliedComputedStyles(
+  element: Element,
+  pseudo?: string
+): { [key: string]: string } {
   if (!(element instanceof HTMLElement || element instanceof SVGElement)) {
     return {};
   }
@@ -64,7 +71,10 @@ export function getAppliedComputedStyles(element: Element, pseudo?: string): { [
     zIndex: 'auto', // TODO
   };
 
-  function pick<T extends { [key: string]: V }, V = any>(object: T, paths: (keyof T)[]) {
+  function pick<T extends { [key: string]: V }, V = any>(
+    object: T,
+    paths: (keyof T)[]
+  ) {
     const newObject: Partial<T> = {};
     paths.forEach((path) => {
       if (object[path]) {
@@ -118,7 +128,8 @@ export function addConstraints(layers: LayerNode[]) {
               setData(child, 'widthType', 'fixed');
             }
 
-            const isInline = computed.display && computed.display.includes('inline');
+            const isInline =
+              computed.display && computed.display.includes('inline');
 
             if (isInline) {
               const parentTextAlign = parentStyle.textAlign;
@@ -141,15 +152,18 @@ export function addConstraints(layers: LayerNode[]) {
             }
             const parentJustifyContent =
               parentStyle.display === 'flex' &&
-              ((parentStyle.flexDirection === 'row' && parentStyle.justifyContent) ||
-                (parentStyle.flexDirection === 'column' && parentStyle.alignItems));
+              ((parentStyle.flexDirection === 'row' &&
+                parentStyle.justifyContent) ||
+                (parentStyle.flexDirection === 'column' &&
+                  parentStyle.alignItems));
 
             if (parentJustifyContent === 'center') {
               hasAutoMarginLeft = true;
               hasAutoMarginRight = true;
             } else if (
               parentJustifyContent &&
-              (parentJustifyContent.includes('end') || parentJustifyContent.includes('right'))
+              (parentJustifyContent.includes('end') ||
+                parentJustifyContent.includes('right'))
             ) {
               hasAutoMarginLeft = true;
               hasAutoMarginRight = false;
@@ -157,12 +171,18 @@ export function addConstraints(layers: LayerNode[]) {
 
             const parentAlignItems =
               parentStyle.display === 'flex' &&
-              ((parentStyle.flexDirection === 'column' && parentStyle.justifyContent) ||
-                (parentStyle.flexDirection === 'row' && parentStyle.alignItems));
+              ((parentStyle.flexDirection === 'column' &&
+                parentStyle.justifyContent) ||
+                (parentStyle.flexDirection === 'row' &&
+                  parentStyle.alignItems));
             if (parentAlignItems === 'center') {
               hasAutoMarginTop = true;
               hasAutoMarginBottom = true;
-            } else if (parentAlignItems && (parentAlignItems.includes('end') || parentAlignItems.includes('bottom'))) {
+            } else if (
+              parentAlignItems &&
+              (parentAlignItems.includes('end') ||
+                parentAlignItems.includes('bottom'))
+            ) {
               hasAutoMarginTop = true;
               hasAutoMarginBottom = false;
             }
@@ -178,8 +198,18 @@ export function addConstraints(layers: LayerNode[]) {
             }
 
             child.constraints = {
-              horizontal: hasAutoMarginLeft && hasAutoMarginRight ? 'CENTER' : hasAutoMarginLeft ? 'MAX' : 'SCALE',
-              vertical: hasAutoMarginBottom && hasAutoMarginTop ? 'CENTER' : hasAutoMarginTop ? 'MAX' : 'MIN',
+              horizontal:
+                hasAutoMarginLeft && hasAutoMarginRight
+                  ? 'CENTER'
+                  : hasAutoMarginLeft
+                    ? 'MAX'
+                    : 'SCALE',
+              vertical:
+                hasAutoMarginBottom && hasAutoMarginTop
+                  ? 'CENTER'
+                  : hasAutoMarginTop
+                    ? 'MAX'
+                    : 'MIN',
             };
           }
         } else {
@@ -197,7 +227,15 @@ export const getBorderRadii = ({
   computedStyle,
 }: {
   computedStyle: CSSStyleDeclaration;
-}): Partial<Pick<RectangleNode, 'topLeftRadius' | 'topRightRadius' | 'bottomLeftRadius' | 'bottomRightRadius'>> => {
+}): Partial<
+  Pick<
+    RectangleNode,
+    | 'topLeftRadius'
+    | 'topRightRadius'
+    | 'bottomLeftRadius'
+    | 'bottomRightRadius'
+  >
+> => {
   const topLeft = parseUnits(computedStyle.borderTopLeftRadius);
   const topRight = parseUnits(computedStyle.borderTopRightRadius);
   const bottomRight = parseUnits(computedStyle.borderBottomRightRadius);
@@ -222,7 +260,8 @@ const hasBorder = ({
   borderWidth: string;
   borderType: string;
   borderColor: string;
-}) => borderWidth && borderWidth !== '0' && borderType !== 'none' && borderColor;
+}) =>
+  borderWidth && borderWidth !== '0' && borderType !== 'none' && borderColor;
 
 export function getStrokesRectangle({
   dir,
@@ -243,8 +282,12 @@ export function getStrokesRectangle({
       if (hasBorder({ borderWidth, borderType, borderColor })) {
         const rgb = getRgb(borderColor);
         if (rgb) {
-          const width = ['top', 'bottom'].includes(dir) ? rect.width : parseFloat(borderWidth);
-          const height = ['left', 'right'].includes(dir) ? rect.height : parseFloat(borderWidth);
+          const width = ['top', 'bottom'].includes(dir)
+            ? rect.width
+            : parseFloat(borderWidth);
+          const height = ['left', 'right'].includes(dir)
+            ? rect.height
+            : parseFloat(borderWidth);
           const fill: SolidPaint = {
             type: 'SOLID',
             color: { r: rgb.r, b: rgb.b, g: rgb.g },
@@ -253,8 +296,18 @@ export function getStrokesRectangle({
           const layer: WithRef<RectangleNode> = {
             ref: el,
             type: 'RECTANGLE',
-            x: dir === 'left' ? rect.left - width : dir === 'right' ? rect.right : rect.left,
-            y: dir === 'top' ? rect.top - height : dir === 'bottom' ? rect.bottom : rect.top,
+            x:
+              dir === 'left'
+                ? rect.left - width
+                : dir === 'right'
+                  ? rect.right
+                  : rect.left,
+            y:
+              dir === 'top'
+                ? rect.top - height
+                : dir === 'bottom'
+                  ? rect.bottom
+                  : rect.top,
             width,
             height,
             fills: [fill],

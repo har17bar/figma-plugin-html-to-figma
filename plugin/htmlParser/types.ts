@@ -1,15 +1,15 @@
 export interface Unit {
-    unit: 'PIXELS';
-    value: number;
+  unit: 'PIXELS';
+  value: number;
 }
 
 export interface SvgNode extends DefaultShapeMixin, ConstraintMixin {
-    type: 'SVG';
-    svg: string;
+  type: 'SVG';
+  svg: string;
 }
 
 export type WithWriteChildren<T> = Partial<T> & {
-    children: WithWriteChildren<T>[];
+  children: WithWriteChildren<T>[];
 };
 
 // export interface Layer {
@@ -26,9 +26,8 @@ export type WithWriteChildren<T> = Partial<T> & {
 //     zIndex: Number(computedStyle.zIndex),
 // }
 
-
 export type PlainLayerNode = Partial<LayerNode> & {
-    fontFamily?: string;
+  fontFamily?: string;
 };
 
 export type MetaLayerNode = WithMeta<LayerNode>;
@@ -46,7 +45,6 @@ export type MetaLayerNode = WithMeta<LayerNode>;
 //     constraints?: FrameNode['constraints'];
 //     clipsContent?: FrameNode['clipsContent'];
 // };
-
 
 // ____
 
@@ -100,8 +98,7 @@ export type WithRef<T> = T & {
 
 export type LayerNode = Partial<
   RectangleNode | TextNode | FrameNode | SvgNode | GroupNode | ComponentNode
-  >;
-
+>;
 
 export type MetaTextNode = WithMeta<TextNode>;
 

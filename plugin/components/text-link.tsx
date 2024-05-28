@@ -1,6 +1,6 @@
-import * as React from "react";
-import { PropsWithChildren } from "react";
-import { theme } from "../constants/theme";
+import * as React from 'react';
+import { PropsWithChildren } from 'react';
+import { theme } from '../constants/theme';
 
 export function TextLink(
   props: PropsWithChildren<
@@ -14,7 +14,7 @@ export function TextLink(
     <a
       target="_blank"
       {...props}
-      style={{ color: "blue", textDecoration: "underline", ...props.style }}
+      style={{ color: 'blue', textDecoration: 'underline', ...props.style }}
     />
   );
 }

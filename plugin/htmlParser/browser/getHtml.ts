@@ -176,44 +176,46 @@ const htmlTxt = `
     </main>
 </body>
 </html>
-`
-export function getHtml() : Document{
-
-    const parser = new DOMParser();
-    return parser.parseFromString(htmlTxt, 'text/html');
+`;
+export function getHtml(): Document {
+  const parser = new DOMParser();
+  return parser.parseFromString(htmlTxt, 'text/html');
 }
 
 export function inlineRemoteCSS(htmlDoc: Document): Promise<Document> {
-    const links = Array.from(htmlDoc.querySelectorAll('link[rel="stylesheet"]')) as HTMLLinkElement[];
+  const links = Array.from(
+    htmlDoc.querySelectorAll('link[rel="stylesheet"]')
+  ) as HTMLLinkElement[];
 
-    const fetchAndInline = (link: HTMLLinkElement) => {
-        return new Promise<void>((resolve, reject) => {
-            fetch(link.href)
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error(`Failed to fetch CSS: ${response.statusText}`);
-                    }
-                    return response.text();
-                })
-                .then(cssText => {
-                    const style = htmlDoc.createElement('style');
-                    style.textContent = cssText;
-                    htmlDoc.head.appendChild(style);
-                    link.remove();
-                    resolve(); // Call resolve with void 0 or undefined
-                })
-                .catch(error => {
-                    console.error(`Error fetching CSS: ${error}`);
-                    reject(error);
-                });
+  const fetchAndInline = (link: HTMLLinkElement) => {
+    return new Promise<void>((resolve, reject) => {
+      fetch(link.href)
+        .then((response) => {
+          if (!response.ok) {
+            throw new Error(`Failed to fetch CSS: ${response.statusText}`);
+          }
+          return response.text();
+        })
+        .then((cssText) => {
+          const style = htmlDoc.createElement('style');
+          style.textContent = cssText;
+          htmlDoc.head.appendChild(style);
+          link.remove();
+          resolve(); // Call resolve with void 0 or undefined
+        })
+        .catch((error) => {
+          console.error(`Error fetching CSS: ${error}`);
+          reject(error);
         });
-    };
+    });
+  };
 
-    const fetchAndInlinePromises = links.map(fetchAndInline);
+  const fetchAndInlinePromises = links.map(fetchAndInline);
 
-    // Synchronously execute fetch and inline operations
-    return fetchAndInlinePromises.reduce((chain, promise) => {
-        return chain.then(() => promise);
+  // Synchronously execute fetch and inline operations
+  return fetchAndInlinePromises
+    .reduce((chain, promise) => {
+      return chain.then(() => promise);
     }, Promise.resolve())
-        .then(() => htmlDoc);
+    .then(() => htmlDoc);
 }

@@ -1,4 +1,4 @@
-import { LayerNode } from "../types/nodes";
+import { LayerNode } from '../types/nodes';
 
 export const hasChildren = (node: LayerNode): node is ChildrenMixin =>
   node && Array.isArray((node as ChildrenMixin).children);
@@ -35,14 +35,14 @@ export function isHidden(element: Element) {
     const computed = getComputedStyle(el);
     if (
       // computed.opacity === '0' ||
-      computed.display === "none" ||
-      computed.visibility === "hidden"
+      computed.display === 'none' ||
+      computed.visibility === 'hidden'
     ) {
       return true;
     }
     // Some sites hide things by having overflow: hidden and height: 0, e.g. dropdown menus that animate height in
     if (
-      computed.overflow !== "visible" &&
+      computed.overflow !== 'visible' &&
       el.getBoundingClientRect().height < 1
     ) {
       return true;

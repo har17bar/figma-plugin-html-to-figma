@@ -1,7 +1,7 @@
-import Tooltip, { TooltipProps } from "@material-ui/core/Tooltip";
-import { HelpOutline } from "@material-ui/icons";
-import * as React from "react";
-import { theme } from "../constants/theme";
+import Tooltip, { TooltipProps } from '@material-ui/core/Tooltip';
+import { HelpOutline } from '@material-ui/icons';
+import * as React from 'react';
+import { theme } from '../constants/theme';
 
 const omit = (obj: any, keys: string[]) => {
   const result: any = {};
@@ -14,18 +14,18 @@ const omit = (obj: any, keys: string[]) => {
 };
 
 export function HelpTooltip(
-  props: React.PropsWithChildren<Omit<TooltipProps, "title">>
+  props: React.PropsWithChildren<Omit<TooltipProps, 'title'>>
 ) {
   return (
     <Tooltip
       className="help-tooltip"
-      {...omit(props, ["style"])}
+      {...omit(props, ['style'])}
       title={<div style={{ fontSize: 12 }}>{props.children}</div>}
     >
       <HelpOutline
         style={{
           fontSize: 14,
-          verticalAlign: "middle",
+          verticalAlign: 'middle',
           marginLeft: 3,
           marginTop: -1,
           color: theme.colors.primary,
