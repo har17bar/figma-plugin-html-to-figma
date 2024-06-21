@@ -679,17 +679,274 @@ class App extends SafeComponent {
     this.state = {
       serializedHtml: 'default',
       userAuthToken: null,
+      sitemaps: [],
+      pages: [],
+      pageSection: [],
+      selectedSitemapId: null,
+      selectedPageId: null,
+      loading: true,
+      errorMessage: '',
     };
     this.iframeRef = createRef();
   }
 
+  render() {
+    const {
+      sitemaps,
+      pages,
+      pageSection,
+      loading,
+      errorMessage,
+      selectedSitemapId,
+      selectedPageId,
+    } = this.state;
+
+    if (loading) {
+      return <div>Loading...</div>;
+    }
+
+    if (errorMessage) {
+      return <div>Error: {errorMessage}</div>;
+    }
+
+    return (
+      <IntlProvider
+        messages={this.currentLanguage === 'en' ? en : ru}
+        locale={this.currentLanguage}
+        defaultLocale="en"
+      >
+        <html>
+          <head>{/* Your head content here */}</head>
+          <body>
+            <div
+              style={{
+                display: 'flex',
+                flexDirection: 'column',
+                height: '100%',
+              }}
+            >
+              <Tabs
+                variant="fullWidth"
+                style={{
+                  minHeight: 40,
+                  backgroundColor: '#F9F9F9',
+                  flexShrink: 0,
+                  width: settings.ui.baseWidth,
+                  borderRight: '1px solid #ccc',
+                }}
+                TabIndicatorProps={{
+                  style: { transition: 'none' },
+                }}
+                value={this.tabIndex}
+                onChange={this.switchTab}
+                indicatorColor="primary"
+                textColor="primary"
+              >
+                <Tab
+                  style={{
+                    minHeight: 40,
+                    minWidth: 0,
+                  }}
+                  label={
+                    <span
+                      style={{
+                        fontSize: 12,
+                        fontWeight: 'bold',
+                        textTransform: 'none',
+                      }}
+                    >
+                      Html to Figma
+                    </span>
+                  }
+                />
+              </Tabs>
+              <Divider style={{ width: settings.ui.baseWidth }} />
+              <iframe
+                id="html_to_figma_layer_id"
+                ref={this.iframeRef}
+                style={{
+                  width: '100%',
+                  height: '500px',
+                  position: 'absolute',
+                  left: '-9999px',
+                }}
+              />
+              <TabPanel value={this.tabIndex} index={0}>
+                <div
+                  style={{
+                    display: 'flex',
+                    flexDirection: 'column',
+                    position: 'relative',
+                    zIndex: 3,
+                    maxWidth: settings.ui.baseWidth,
+                    fontWeight: 400,
+                    marginBottom: 10,
+                    padding: 5,
+                  }}
+                >
+                  <div
+                    style={{
+                      marginTop: 10,
+                      marginBottom: 15,
+                      textTransform: 'none',
+                      backgroundColor: '#007bff',
+                      color: 'white',
+                      padding: '10px 20px',
+                      borderRadius: 4,
+                      display: 'inline-block',
+                      width: '100%',
+                      textAlign: 'center',
+                      transition: 'background-color 0.3s',
+                    }}
+                  >
+                    <FormattedMessage
+                      id="formattedMessage"
+                      defaultMessage="Convert html to layers"
+                    />
+                  </div>
+                </div>
+              </TabPanel>
+              {selectedSitemapId ? (
+                <div>
+                  {selectedPageId ? (
+                    <div>
+                      <h2>Sections for Page ID: {selectedPageId}</h2>
+                      <ul
+                        style={{ listStyleType: 'none', padding: 0, margin: 0 }}
+                      >
+                        {pageSection.map((section: any) => (
+                          <li
+                            key={section.section_id}
+                            onClick={() =>
+                              this.handleSectionSelect(
+                                section,
+                                section.section_id
+                              )
+                            }
+                            style={{
+                              cursor: 'pointer',
+                              padding: '10px 15px',
+                              marginBottom: '5px',
+                              backgroundColor: '#f9f9f9',
+                              borderRadius: '4px',
+                              transition:
+                                'background-color 0.3s, transform 0.3s',
+                            }}
+                            onMouseEnter={(e) => {
+                              (e.target as HTMLElement).style.backgroundColor =
+                                '#e0e0e0';
+                              (e.target as HTMLElement).style.transform =
+                                'scale(1.02)';
+                            }}
+                            onMouseLeave={(e) => {
+                              (e.target as HTMLElement).style.backgroundColor =
+                                '#f9f9f9';
+                              (e.target as HTMLElement).style.transform =
+                                'scale(1)';
+                            }}
+                          >
+                            {section.name} - {section.description}
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  ) : (
+                    <div>
+                      <h2>Pages for Sitemap ID: {selectedSitemapId}</h2>
+                      <ul
+                        style={{ listStyleType: 'none', padding: 0, margin: 0 }}
+                      >
+                        {pages.map((page: any) => (
+                          <li
+                            key={page.page_id}
+                            onClick={() => this.handlePageSelect(page.page_id)}
+                            style={{
+                              cursor: 'pointer',
+                              padding: '10px 15px',
+                              marginBottom: '5px',
+                              backgroundColor: '#f9f9f9',
+                              borderRadius: '4px',
+                              transition:
+                                'background-color 0.3s, transform 0.3s',
+                            }}
+                            onMouseEnter={(e) => {
+                              (e.target as HTMLElement).style.backgroundColor =
+                                '#e0e0e0';
+                              (e.target as HTMLElement).style.transform =
+                                'scale(1.02)';
+                            }}
+                            onMouseLeave={(e) => {
+                              (e.target as HTMLElement).style.backgroundColor =
+                                '#f9f9f9';
+                              (e.target as HTMLElement).style.transform =
+                                'scale(1)';
+                            }}
+                          >
+                            {page.page_id} - {page.title} - {page.description}
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
+                </div>
+              ) : (
+                <div>
+                  <h2>Select a Sitemap</h2>
+                  <ul style={{ listStyleType: 'none', padding: 0, margin: 0 }}>
+                    {sitemaps.map((sitemap: any) => (
+                      <li
+                        key={sitemap.sitemap_id}
+                        onClick={() =>
+                          this.handleSitemapSelect(sitemap.sitemap_id)
+                        }
+                        style={{
+                          cursor: 'pointer',
+                          padding: '10px 15px',
+                          marginBottom: '5px',
+                          backgroundColor: '#f9f9f9',
+                          borderRadius: '4px',
+                          transition: 'background-color 0.3s, transform 0.3s',
+                        }}
+                        onMouseEnter={(e) => {
+                          (e.target as HTMLElement).style.backgroundColor =
+                            '#e0e0e0';
+                          (e.target as HTMLElement).style.transform =
+                            'scale(1.02)';
+                        }}
+                        onMouseLeave={(e) => {
+                          (e.target as HTMLElement).style.backgroundColor =
+                            '#f9f9f9';
+                          (e.target as HTMLElement).style.transform =
+                            'scale(1)';
+                        }}
+                      >
+                        {sitemap.sitemap_id} - {sitemap.user_query}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+            </div>
+          </body>
+        </html>
+      </IntlProvider>
+    );
+  }
+
   componentDidMount() {
+    this.setupLoginForm();
+    this.fetchSitemaps();
+    this.initializeEventListeners();
+  }
+
+  setupLoginForm() {
     const usernameElement = document.getElementById(
       'username'
     ) as HTMLInputElement | null;
     const passwordElement = document.getElementById(
       'password'
     ) as HTMLInputElement | null;
+
     const loginForm = document.getElementById('login-form');
     const reactPage = document.getElementById('react-page');
 
@@ -700,18 +957,13 @@ class App extends SafeComponent {
           const username = usernameElement.value;
           const password = passwordElement.value;
 
-          // Example: Perform login validation (replace this with your actual login logic)
           if (username === 'p' && password === 'p') {
-            // If login is successful, show the container div
             loginForm.style.display = 'none';
             reactPage.style.display = 'block';
 
-            // Make API request
             fetch('https://api.rawii.ai/api/authenticate', {
               method: 'POST',
-              headers: {
-                'Content-Type': 'application/json',
-              },
+              headers: { 'Content-Type': 'application/json' },
               body: JSON.stringify({
                 login: 'har17bar',
                 password: 'root',
@@ -726,9 +978,9 @@ class App extends SafeComponent {
               })
               .then((data) => {
                 if (data.token) {
-                  this.setState({ serializedHtml: data.token }); // Save the token in state
+                  this.setState({ userAuthToken: data.token });
+                  this.fetchSitemaps(); // Fetch sitemaps after successful login
                 }
-                console.log(data); // Handle API response here
               })
               .catch((error) => {
                 console.error(
@@ -742,7 +994,122 @@ class App extends SafeComponent {
         });
       }
     }
+  }
 
+  fetchSitemaps() {
+    this.setState({ loading: true });
+    fetch('https://dev-api.dlta.ai/ws/sitemaps/?user_id=102', {
+      headers: { Authorization: `Bearer ${this.state.userAuthToken}` },
+    })
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error('Cannot fetch sitemaps');
+        }
+        return response.json();
+      })
+      .then((data) => {
+        this.setState({ sitemaps: data, loading: false });
+      })
+      .catch((error) => {
+        console.error('Error fetching sitemaps:', error);
+        this.setState({
+          loading: false,
+          errorMessage: 'Error fetching sitemaps',
+        });
+      });
+  }
+
+  handleSitemapSelect(sitemapId: string) {
+    this.setState({ selectedSitemapId: sitemapId, loading: true });
+    fetch(
+      `https://dev-api.dlta.ai/ws/sitemap/pages/?sitemap_id=${sitemapId}&user_id=102`,
+      {
+        headers: { Authorization: `Bearer ${this.state.userAuthToken}` },
+      }
+    )
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error('Cannot fetch pages');
+        }
+        return response.json();
+      })
+      .then((data) => {
+        this.setState({ pages: data, loading: false });
+      })
+      .catch((error) => {
+        console.error('Error fetching pages:', error);
+        this.setState({ loading: false, errorMessage: 'Error fetching pages' });
+      });
+  }
+
+  handlePageSelect(pageId: string) {
+    this.setState({ selectedPageId: pageId, loading: true });
+    console.log(pageId, '_____');
+    const { selectedSitemapId } = this.state;
+    fetch(
+      `https://dev-api.dlta.ai/ws/sitemap/page/sections/?sitemap_id=${selectedSitemapId}&user_id=102&page_id=${pageId}`,
+      {
+        headers: { Authorization: `Bearer ${this.state.userAuthToken}` },
+      }
+    )
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error('Cannot fetch pages');
+        }
+        return response.json();
+      })
+      .then((data) => {
+        console.log(data, '+++++++');
+        this.setState({ pageSection: data, loading: false });
+      })
+      .catch((error) => {
+        console.error('Error fetching pages:', error);
+        this.setState({ loading: false, errorMessage: 'Error fetching pages' });
+      });
+  }
+
+  handleSectionSelect(section: any, section_id: any) {
+    console.log(section_id, 'section_id');
+    console.log(section, 'section');
+    console.log(section.html_css_content, 'section.html_css_content');
+
+    const result = `<html>
+        <body>
+        ${section.html_css_content}
+        </body>
+     </html>`;
+    console.log(result, 'resultresult');
+
+    const parser = new DOMParser();
+    //Todo fetch htmlTxt by wireframeId and userAuthToken
+    const htmlDoc = parser.parseFromString(result, 'text/html');
+
+    // Set the id on the body tag if it doesn't already have one
+    if (!htmlDoc.body.id) {
+      htmlDoc.body.id = convertHtmlToLayerId;
+    }
+
+    const serializedHtml = new XMLSerializer().serializeToString(htmlDoc);
+
+    // Update state with serialized HTML and ensure the iframe is ready before proceeding
+    this.setState({ serializedHtml }, () => {
+      this.injectHtmlIntoIframe(); // Inject HTML into iframe
+
+      // Call handleHtmlToFigma after the iframe is ready
+      this.handleHtmlToFigma()
+        .then(() => {
+          // Code to execute after handleHtmlToFigma completes
+        })
+        .catch((error) => {
+          // Handle any errors
+          console.error('Error:', error);
+        });
+    });
+
+    // console.log('Clicked on', wireframeId);
+  }
+
+  initializeEventListeners() {
     window.addEventListener('message', (e) => {
       const { data: rawData } = e as MessageEvent;
 
@@ -768,30 +1135,6 @@ class App extends SafeComponent {
         this.clientStorage = data.data;
       }
     });
-
-    this.loadingCmsData = true;
-    fetch(
-      'https://cdn.builder.io/api/v3/content/figma-modal-items?apiKey=YJIGb4i01jvw0SRdL5Bt'
-    )
-      .then((response) => {
-        if (!response.ok) {
-          console.error('Cannot fetch figma checklist', response);
-          return;
-        }
-        return response.json();
-      })
-      .then((data) => {
-        this.figmaCheckList = data;
-        if (data?.results) {
-          this.loaderContent = this.loaderContent.concat(
-            data.results.filter(
-              (item: CheckListContent) => item.data.type === 'during'
-            )
-          );
-          this.loaderContent = this.loaderContent.slice().reverse();
-        }
-        this.loadingCmsData = false;
-      });
 
     parent.postMessage(
       {
@@ -848,12 +1191,6 @@ class App extends SafeComponent {
     );
   }
 
-  componentDidUpdate(prevProps: {}, prevState: HtmlSerializerState) {
-    if (prevState.serializedHtml !== this.state.serializedHtml) {
-      this.injectHtmlIntoIframe();
-    }
-  }
-
   injectHtmlIntoIframe = () => {
     const iframe = this.iframeRef.current;
     if (iframe) {
@@ -864,6 +1201,20 @@ class App extends SafeComponent {
         iframeDoc.open();
         iframeDoc.write(this.state.serializedHtml);
         iframeDoc.close();
+      }
+    }
+  };
+
+  handleHtmlToFigma = async () => {
+    const iframe = this.iframeRef.current;
+    if (iframe) {
+      try {
+        setContext(iframe.contentWindow as Window);
+        const data = await htmlToFigmaFrame('#' + convertHtmlToLayerId);
+        console.log('Figma Data:', data);
+        sendToFigma(data);
+      } catch (error) {
+        console.error('Error converting to Figma layers:', error);
       }
     }
   };
@@ -882,19 +1233,11 @@ class App extends SafeComponent {
     }
   };
 
-  handleHtmlToFigma = async () => {
-    const iframe = this.iframeRef.current;
-    if (iframe) {
-      try {
-        setContext(iframe.contentWindow as Window);
-        const data = await htmlToFigmaFrame('#' + convertHtmlToLayerId);
-        console.log('Figma Data:', data);
-        sendToFigma(data);
-      } catch (error) {
-        console.error('Error converting to Figma layers:', error);
-      }
+  componentDidUpdate(prevProps: {}, prevState: HtmlSerializerState) {
+    if (prevState.serializedHtml !== this.state.serializedHtml) {
+      this.injectHtmlIntoIframe();
     }
-  };
+  }
 
   onCreate = () => {
     if (this.loading) {
@@ -995,207 +1338,6 @@ class App extends SafeComponent {
     this.tabIndex = newValue;
   };
 
-  render() {
-    const fetchWireFrames = () => {
-      // Todo get ides for user, token this.state.userAuthToken
-      console.log(this.state.userAuthToken);
-      return ['warframe-1', 'warframe-2', 'warframe-3'];
-    };
-
-    const itemList = fetchWireFrames();
-
-    const handleItemClick = (wireframeId: string) => {
-      // Todo get html by wireframe id this.state.userAuthToken
-      const htmlDoc = getHtml(wireframeId);
-
-      const serializedHtml = new XMLSerializer().serializeToString(htmlDoc);
-
-      // Update state with serialized HTML and ensure the iframe is ready before proceeding
-      this.setState({ serializedHtml }, () => {
-        this.injectHtmlIntoIframe(); // Inject HTML into iframe
-
-        // Call handleHtmlToFigma after the iframe is ready
-        this.handleHtmlToFigma()
-          .then(() => {
-            // Code to execute after handleHtmlToFigma completes
-          })
-          .catch((error) => {
-            // Handle any errors
-            console.error('Error:', error);
-          });
-      });
-
-      console.log('Clicked on', wireframeId);
-    };
-
-    return (
-      <IntlProvider
-        messages={this.currentLanguage === 'en' ? en : ru}
-        locale={this.currentLanguage}
-        defaultLocale="en"
-      >
-        <html>
-          <head>{/* Your head content here */}</head>
-          <body>
-            <div
-              style={{
-                display: 'flex',
-                flexDirection: 'column',
-                overflow: 'auto',
-                alignItems: 'stretch',
-                height: '100%',
-              }}
-            >
-              <Tabs
-                variant="fullWidth"
-                style={{
-                  minHeight: 40,
-                  backgroundColor: '#F9F9F9',
-                  flexShrink: 0,
-                  width: settings.ui.baseWidth,
-                  borderRight: '1px solid #ccc',
-                }}
-                TabIndicatorProps={{
-                  style: { transition: 'none' },
-                }}
-                value={this.tabIndex}
-                onChange={this.switchTab}
-                indicatorColor="primary"
-                textColor="primary"
-              >
-                <Tab
-                  style={{
-                    minHeight: 40,
-                    minWidth: 0,
-                  }}
-                  label={
-                    <span
-                      style={{
-                        fontSize: 12,
-                        fontWeight: 'bold',
-                        textTransform: 'none',
-                      }}
-                    >
-                      Html to Figma
-                    </span>
-                  }
-                />
-              </Tabs>
-              <Divider style={{ width: settings.ui.baseWidth }} />
-            </div>
-            {/* Rendered HTML content with associated CSS styles */}
-            {/*<div style={{position: "absolute", left: "-9999px"}} dangerouslySetInnerHTML={{ __html: this.state.serializedHtml }} id="html_to_figma_layer_id"/>*/}
-            <iframe
-              id="html_to_figma_layer_id"
-              ref={this.iframeRef}
-              style={{
-                width: '100%',
-                height: '500px',
-                position: 'absolute',
-                left: '-9999px',
-              }}
-            />
-            <div style={{ width: '200px' }}>
-              {' '}
-              {/* Adjust the marginLeft according to your layout */}
-              <ul style={{ listStyleType: 'none', padding: 0, margin: 0 }}>
-                {itemList.map((id, index) => (
-                  <li
-                    key={index}
-                    onClick={() => handleItemClick(id)}
-                    style={{
-                      cursor: 'pointer',
-                      padding: '10px 15px',
-                      marginBottom: '5px',
-                      backgroundColor: '#f9f9f9', // Light gray background
-                      borderRadius: '4px', // Rounded corners
-                      transition: 'background-color 0.3s, transform 0.3s', // Smooth transition
-                    }}
-                    onMouseEnter={(e) => {
-                      (e.target as HTMLElement).style.backgroundColor =
-                        '#e0e0e0'; // Darker gray on hover
-                      (e.target as HTMLElement).style.transform = 'scale(1.02)'; // Slightly larger on hover
-                    }}
-                    onMouseLeave={(e) => {
-                      (e.target as HTMLElement).style.backgroundColor =
-                        '#f9f9f9';
-                      (e.target as HTMLElement).style.transform = 'scale(1)'; // Reset scale
-                    }}
-                  >
-                    id: {id}
-                  </li>
-                ))}
-              </ul>
-            </div>
-          </body>
-        </html>
-        <div
-          style={{
-            display: 'flex',
-            flexDirection: 'column',
-            overflow: 'auto',
-            alignItems: 'stretch',
-            height: '100%',
-          }}
-        >
-          <Tabs
-            variant="fullWidth"
-            style={{
-              minHeight: 40,
-              backgroundColor: '#F9F9F9',
-              flexShrink: 0,
-              width: settings.ui.baseWidth,
-              borderRight: '1px solid #ccc',
-            }}
-            TabIndicatorProps={{
-              style: { transition: 'none' },
-            }}
-            value={this.tabIndex}
-            onChange={this.switchTab}
-            indicatorColor="primary"
-            textColor="primary"
-          ></Tabs>
-          <Divider style={{ width: settings.ui.baseWidth }} />
-          <TabPanel value={this.tabIndex} index={0}>
-            <div
-              style={{
-                display: 'flex',
-                flexDirection: 'column',
-                position: 'relative',
-                zIndex: 3,
-                maxWidth: settings.ui.baseWidth,
-                fontWeight: 400,
-                marginBottom: 10,
-                padding: 5,
-              }}
-            >
-              <div
-                style={{
-                  marginTop: 10,
-                  marginBottom: 15,
-                  textTransform: 'none',
-                  backgroundColor: '#007bff', // Blue background color
-                  color: 'white', // White text color
-                  padding: '10px 20px', // Padding for content
-                  borderRadius: 4, // Rounded corners
-                  display: 'inline-block', // Ensure div behaves like a block element
-                  width: '100%', // Ensure div takes full width
-                  textAlign: 'center', // Center text horizontally
-                  transition: 'background-color 0.3s', // Smooth transition for background color change
-                }}
-              >
-                {/* Your content here instead of the Button */}
-                <FormattedMessage
-                  id="formattedMessage"
-                  defaultMessage="Convert html to layers"
-                />
-              </div>
-            </div>
-          </TabPanel>
-        </div>
-      </IntlProvider>
-    );
-  }
   handleDevModeClick(): void {
     this.devModeClickCount++;
     if (this.devModeClickCount > 4) {

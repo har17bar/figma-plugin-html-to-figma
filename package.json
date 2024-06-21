@@ -18,7 +18,7 @@
     "build": "tsc && NODE_OPTIONS=--openssl-legacy-provider NODE_ENV=production webpack --mode=production",
     "release:patch": "npm version patch && npm run build && npm publish",
     "release:dev": "npm version prerelease && npm run build && npm publish --tag dev",
-    "prettier:format": "prettier --write \"./**/*.{js,jsx,ts,tsx,json,css,scss,md}\""
+    "prettier:fix": "prettier --write \"./**/*.{js,jsx,ts,tsx,json,css,scss,md}\""
   },
   "repository": {
     "type": "git",
